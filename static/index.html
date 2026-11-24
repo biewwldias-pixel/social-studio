@@ -2717,6 +2717,7 @@
         guideCache: {},
         guideOpen: false,
         isAnalyzing: false,
+        updateInfo: null,
       };
 
       function escapeAttr(str) {
@@ -2841,7 +2842,75 @@
                 <input id="env_R2_CLOUDFLARE_SECRET_ACCESS_KEY" type="password" value="${escapeAttr(settingsState.r2Values.R2_CLOUDFLARE_SECRET_ACCESS_KEY)}" />
               </div>
             </div>
+            <div class="settings-section">
+              <div class="settings-section-head">
+                <div class="row" style="justify-content:space-between">
+                  <span class="settings-section-title">Atualizações do aplicativo</span>
+                  <span id="updateVersionBadge" class="mono">${settingsState.updateInfo ? `v${settingsState.updateInfo.currentVersion}` : ""}</span>
+                </div>
+                <span id="updateStatusDesc" class="settings-section-desc">
+                  ${
+                    settingsState.updateInfo?.updateAvailable
+                      ? `Nova versão v${settingsState.updateInfo.latestVersion} disponível para instalação automática.`
+                      : "Verifique se existe uma nova versão do Social Studio no GitHub."
+                  }
+                </span>
+              </div>
+              <div class="row">
+                <button type="button" class="btn" id="checkUpdateBtn">Verificar atualizações</button>
+                ${
+                  settingsState.updateInfo?.updateAvailable
+                    ? `<button type="button" class="btn btn-primary" id="applyUpdateBtn">Atualizar para v${settingsState.updateInfo.latestVersion}</button>`
+                    : ""
+                }
+              </div>
+            </div>
           `;
+          $("checkUpdateBtn").onclick = async () => {
+            const btn = $("checkUpdateBtn");
+            btn.disabled = true;
+            btn.textContent = "Verificando...";
+            try {
+              const res = await fetch("/api/update/check");
+              settingsState.updateInfo = await res.json();
+              renderSettingsBody();
+              if (settingsState.updateInfo.error) {
+                showGlobalToast("Erro ao verificar: " + settingsState.updateInfo.error);
+              } else if (settingsState.updateInfo.updateAvailable) {
+                showGlobalToast(`Nova versão v${settingsState.updateInfo.latestVersion} disponível!`);
+              } else {
+                showGlobalToast("Você já está na versão mais recente!");
+              }
+            } finally {
+              if ($("checkUpdateBtn")) {
+                $("checkUpdateBtn").disabled = false;
+                $("checkUpdateBtn").textContent = "Verificar atualizações";
+              }
+            }
+          };
+          if ($("applyUpdateBtn")) {
+            $("applyUpdateBtn").onclick = async () => {
+              const btn = $("applyUpdateBtn");
+              btn.disabled = true;
+              btn.textContent = "Baixando atualização...";
+              try {
+                const res = await fetch("/api/update/apply", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    downloadUrl: settingsState.updateInfo?.downloadUrl || "",
+                  }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || "Falha ao atualizar");
+                showGlobalToast(data.message || "Atualizando...");
+              } catch (err) {
+                showGlobalToast("Erro: " + err.message);
+                btn.disabled = false;
+                btn.textContent = `Atualizar para v${settingsState.updateInfo?.latestVersion || ""}`;
+              }
+            };
+          }
           return;
         }
 
@@ -3147,7 +3216,22 @@
         showGlobalToast("Alterações salvas!");
       };
 
+      async function silentCheckUpdate() {
+        try {
+          const res = await fetch("/api/update/check");
+          if (!res.ok) return;
+          const info = await res.json();
+          settingsState.updateInfo = info;
+          if (info.updateAvailable) {
+            const btn = $("openSettingsBtn");
+            btn.title = `Configurações (Atualização v${info.latestVersion} disponível!)`;
+            btn.innerHTML = `⚙ <span class="status-dot ok"></span>`;
+          }
+        } catch {}
+      }
+
       loadBrands();
+      silentCheckUpdate();
     </script>
   </body>
 </html>

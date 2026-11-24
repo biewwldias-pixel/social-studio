@@ -47,6 +47,7 @@ ALLOWED_ENV_KEYS = (
     "R2_BUCKET",
 )
 from studio.chats import delete_chat, list_chats, upsert_chat
+from studio.updater import apply_update, check_for_update
 from studio.publisher import (
     add_schedule,
     check_instagram_profile,
@@ -126,6 +127,10 @@ class SaveChatRequest(BaseModel):
     id: str | None = None
     title: str | None = None
     messages: list[dict[str, Any]]
+
+
+class ApplyUpdateRequest(BaseModel):
+    downloadUrl: str = ""
 
 
 class SaveMetaRequest(BaseModel):
@@ -551,6 +556,19 @@ async def api_pick_folder(body: PickFolderRequest) -> dict[str, str]:
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Não foi possível abrir o seletor de pastas: {exc}") from exc
     return {"path": selected}
+
+
+@app.get("/api/update/check")
+async def api_check_update() -> dict[str, Any]:
+    return await check_for_update()
+
+
+@app.post("/api/update/apply")
+async def api_apply_update(body: ApplyUpdateRequest) -> dict[str, str]:
+    try:
+        return await apply_update(body.downloadUrl)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @app.get("/api/settings")
