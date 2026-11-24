@@ -118,7 +118,7 @@ class UpdateBrandRequest(BaseModel):
 
 
 class AnalyzeDesignRequest(BaseModel):
-    model: str | None = "neon"
+    model: str | None = "gemini-4-neon"
     thinking: str | None = "medium"
 
 

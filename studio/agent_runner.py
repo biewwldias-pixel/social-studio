@@ -190,7 +190,7 @@ class BrandAgentPool:
     async def stream_analyze_design(
         self,
         brand_id: str,
-        model: str | None = "neon",
+        model: str | None = "gemini-4-neon",
         thinking: str | None = "medium",
     ) -> AsyncIterator[dict[str, Any]]:
         brand = get_brand(brand_id)
@@ -206,7 +206,9 @@ class BrandAgentPool:
         analyze_save_dir = SESSIONS_DIR / f"_analyze_{brand.id}"
         analyze_save_dir.mkdir(parents=True, exist_ok=True)
 
-        normalized_model = (model or "").strip() or "neon"
+        normalized_model = (model or "").strip() or "gemini-4-neon"
+        if normalized_model == "neon":
+            normalized_model = "gemini-4-neon"
         normalized_thinking = (thinking or "").strip() or "medium"
         model_config: str | ModelTarget = ModelTarget(
             name=normalized_model,
