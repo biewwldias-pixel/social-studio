@@ -1,0 +1,41 @@
+name: Build Windows SocialStudio.exe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Instalar dependências + PyInstaller + pywebview
+        shell: pwsh
+        run: |
+          uv sync
+          uv pip install pywebview pyinstaller
+
+      - name: Gerar SocialStudio.exe
+        shell: pwsh
+        run: |
+          uv run pyinstaller `
+            --noconfirm `
+            --onefile `
+            --windowed `
+            --name SocialStudio `
+            --icon "static/icon.ico" `
+            --add-data "static;static" `
+            --add-data "brands;brands" `
+            --collect-all google.antigravity `
+            desktop.py
+
+      - name: Publicar artefato SocialStudio.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: SocialStudio-Windows
+          path: dist/SocialStudio.exe

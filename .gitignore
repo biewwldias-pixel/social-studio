@@ -1,0 +1,15 @@
+.venv/
+.env
+brands.json
+brands/*.md
+chats/
+drafts/
+.agent-sessions/
+schedules.json
+history.json
+studio.log
+__pycache__/
+*.pyc
+dist/
+build/
+*.spec

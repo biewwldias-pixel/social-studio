@@ -1,0 +1,3152 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Social Studio</title>
+    <meta name="theme-color" content="#09090b" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icon-512.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #09090b;
+        --bg-elev: #111115;
+        --bg-card: #16161c;
+        --bg-hover: #1e1e26;
+        --border: rgba(255, 255, 255, 0.08);
+        --border-strong: rgba(255, 255, 255, 0.14);
+        --ink: #f4f4f6;
+        --ink-soft: #a1a1b0;
+        --ink-faint: #6c6c7c;
+        --primary: #ffffff;
+        --primary-ink: #09090b;
+        --brand-accent: #6366f1;
+        --accent-glow: color-mix(in srgb, var(--brand-accent) 28%, transparent);
+        --ok: #22c55e;
+        --radius-sm: 8px;
+        --radius-md: 14px;
+        --radius-lg: 20px;
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100dvh;
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+      }
+
+      /* Topbar */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        height: 56px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 20px;
+        background: rgba(9, 9, 11, 0.78);
+        backdrop-filter: blur(14px);
+      }
+
+      .topbar-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .studio-logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: block;
+      }
+
+      .segmented {
+        display: inline-flex;
+        padding: 3px;
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        gap: 2px;
+      }
+
+      .seg-btn {
+        border: 0;
+        background: transparent;
+        color: var(--ink-soft);
+        padding: 5px 11px;
+        border-radius: 7px;
+        font: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 150ms var(--ease), color 150ms var(--ease);
+      }
+
+      .seg-btn:hover {
+        color: var(--ink);
+      }
+
+      .seg-btn.active {
+        background: var(--bg-hover);
+        color: var(--ink);
+      }
+
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: var(--ink-faint);
+      }
+
+      .status-dot.ok {
+        background: var(--ok);
+        box-shadow: 0 0 8px rgba(34, 197, 94, 0.55);
+      }
+
+      .btn {
+        border: 1px solid var(--border);
+        background: var(--bg-elev);
+        color: var(--ink);
+        padding: 7px 12px;
+        border-radius: 9px;
+        font: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: background 150ms var(--ease), border-color 150ms var(--ease);
+      }
+
+      .btn:hover:not(:disabled) {
+        background: var(--bg-hover);
+        border-color: var(--border-strong);
+      }
+
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--primary-ink);
+        border-color: transparent;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: #e4e4e7;
+      }
+
+      .btn-sm {
+        padding: 5px 9px;
+        font-size: 11.5px;
+      }
+
+      .btn-danger {
+        color: #fca5a5;
+        border-color: rgba(248, 113, 113, 0.25);
+      }
+
+      .btn-danger:hover:not(:disabled) {
+        background: rgba(239, 68, 68, 0.14);
+        border-color: rgba(248, 113, 113, 0.45);
+        color: #fecaca;
+      }
+
+      .icon-btn {
+        position: relative;
+        padding: 7px 10px;
+      }
+
+      .badge-count {
+        min-width: 17px;
+        height: 17px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background: var(--primary);
+        color: var(--primary-ink);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10.5px;
+        font-weight: 700;
+        display: inline-grid;
+        place-items: center;
+        line-height: 1;
+      }
+
+      .badge-count:empty,
+      .badge-count.hidden {
+        display: none;
+      }
+
+      .sched-list-item {
+        display: grid;
+        grid-template-columns: 54px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        padding: 12px;
+        border-radius: var(--radius-md);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        transition: border-color 140ms var(--ease);
+      }
+
+      .sched-list-item:hover {
+        border-color: var(--border-strong);
+      }
+
+      .sched-thumb {
+        width: 54px;
+        height: 68px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: #000;
+        border: 1px solid var(--border);
+      }
+
+      .sched-info {
+        min-width: 0;
+        display: grid;
+        gap: 4px;
+      }
+
+      .sched-info strong {
+        font-size: 13.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .sched-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: var(--ink-soft);
+      }
+
+      .status-pill {
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        background: rgba(99, 102, 241, 0.16);
+        color: #c7d2fe;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+      }
+
+      .status-pill.published {
+        background: rgba(34, 197, 94, 0.14);
+        color: #86efac;
+        border-color: rgba(34, 197, 94, 0.3);
+      }
+
+      .status-pill.failed {
+        background: rgba(239, 68, 68, 0.14);
+        color: #fca5a5;
+        border-color: rgba(239, 68, 68, 0.3);
+      }
+
+      .sched-edit-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: rgba(99, 102, 241, 0.12);
+        border: 1px solid rgba(99, 102, 241, 0.28);
+        font-size: 12.5px;
+        color: #e0e7ff;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 36px 16px;
+        color: var(--ink-faint);
+        display: grid;
+        gap: 6px;
+        justify-items: center;
+      }
+
+      /* First fold (100dvh AI screen) */
+      .shell {
+        min-height: calc(100dvh - 56px);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      /* AI Chat Canvas */
+      .ai-canvas {
+        flex: 1;
+        min-height: calc(100dvh - 56px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px 32px;
+        position: relative;
+        background:
+          radial-gradient(
+            ellipse 76% 62% at 50% 22%,
+            color-mix(in srgb, var(--brand-accent) 26%, transparent),
+            transparent 72%
+          ),
+          radial-gradient(
+            ellipse 48% 40% at 50% 82%,
+            color-mix(in srgb, var(--brand-accent) 10%, transparent),
+            transparent 75%
+          );
+      }
+
+      .ai-canvas.has-messages {
+        justify-content: flex-end;
+        height: calc(100dvh - 56px);
+        padding-bottom: 20px;
+      }
+
+      .scroll-cue {
+        position: absolute;
+        bottom: 18px;
+        border: 0;
+        background: transparent;
+        color: var(--ink-faint);
+        font: inherit;
+        font-size: 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        transition: color 150ms var(--ease);
+      }
+
+      .scroll-cue:hover {
+        color: var(--ink-soft);
+      }
+
+      .ai-canvas.has-messages .scroll-cue {
+        display: none;
+      }
+
+      /* Below-the-fold Gallery */
+      .gallery-section {
+        width: 100%;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 36px 24px 80px;
+        border-top: 1px solid var(--border);
+        display: grid;
+        gap: 20px;
+      }
+
+      .gallery-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .gallery-head h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 18px;
+      }
+
+      .gallery-card {
+        text-align: left;
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        padding: 0;
+        color: var(--ink);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        transition: transform 180ms var(--ease), border-color 180ms var(--ease), box-shadow 180ms var(--ease);
+      }
+
+      .gallery-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--border-strong);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      .gallery-card.selected {
+        border-color: #ffffff;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25), 0 18px 40px rgba(0, 0, 0, 0.5);
+      }
+
+      .gallery-check {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        border: 1.5px solid rgba(255, 255, 255, 0.5);
+        background: rgba(9, 9, 11, 0.65);
+        backdrop-filter: blur(6px);
+        color: #09090b;
+        display: none;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .gallery-grid.selecting .gallery-check,
+      .gallery-card.selected .gallery-check {
+        display: grid;
+      }
+
+      .gallery-card.selected .gallery-check {
+        background: #ffffff;
+        border-color: #ffffff;
+      }
+
+      /* Right-click Context Menu */
+      .context-menu {
+        position: fixed;
+        z-index: 100;
+        min-width: 196px;
+        padding: 6px;
+        background: rgba(20, 20, 26, 0.96);
+        backdrop-filter: blur(18px);
+        border: 1px solid var(--border-strong);
+        border-radius: 13px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72);
+        display: none;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .context-menu.open {
+        display: flex;
+      }
+
+      .context-item {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: var(--ink);
+        padding: 8px 10px;
+        border-radius: 8px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        text-align: left;
+        transition: background 120ms var(--ease), color 120ms var(--ease);
+      }
+
+      .context-item:hover {
+        background: var(--bg-hover);
+      }
+
+      .context-item.danger {
+        color: #fca5a5;
+      }
+
+      .context-item.danger:hover {
+        background: rgba(239, 68, 68, 0.16);
+        color: #fecaca;
+      }
+
+      .context-sep {
+        height: 1px;
+        margin: 4px 6px;
+        background: var(--border);
+      }
+
+      /* Floating Multi-Select Action Bar */
+      .selection-bar {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+        z-index: 60;
+        display: none;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: rgba(20, 20, 26, 0.94);
+        backdrop-filter: blur(16px);
+        border: 1px solid var(--border-strong);
+        border-radius: 999px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      }
+
+      .selection-bar.open {
+        display: flex;
+      }
+
+      .selection-count {
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 0 6px;
+        color: var(--ink);
+      }
+
+      .floating-toast {
+        position: fixed;
+        right: 22px;
+        bottom: 22px;
+        z-index: 120;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: rgba(22, 22, 28, 0.96);
+        border: 1px solid var(--border-strong);
+        color: var(--ink);
+        font-size: 13px;
+        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65);
+        display: none;
+      }
+
+      .floating-toast.open {
+        display: block;
+      }
+
+      .gallery-thumb {
+        position: relative;
+        aspect-ratio: 4 / 5;
+        background: #000;
+        overflow: hidden;
+      }
+
+      .gallery-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .gallery-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: rgba(9, 9, 11, 0.78);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--ink);
+      }
+
+      .gallery-meta {
+        padding: 12px 14px;
+        display: grid;
+        gap: 3px;
+      }
+
+      .gallery-meta strong {
+        font-size: 13.5px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .gallery-meta span {
+        font-size: 12px;
+        color: var(--ink-faint);
+      }
+
+      /* Post Preview Modal (Full-screen Instagram studio view) */
+      dialog.post-modal {
+        width: 100vw;
+        height: 100dvh;
+        max-width: 100vw;
+        max-height: 100dvh;
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      dialog.post-modal::backdrop {
+        background: var(--bg);
+      }
+
+      dialog.post-modal .modal-shell {
+        height: 100dvh;
+        max-height: 100dvh;
+      }
+
+      .post-modal-body {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(340px, 460px);
+        gap: 32px;
+        max-width: 1320px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 28px 36px;
+        overflow-y: auto;
+        align-items: center;
+      }
+
+      dialog.post-modal .ig-frame {
+        max-width: 560px;
+        width: 100%;
+        justify-self: center;
+      }
+
+      dialog.post-modal .ig-media img {
+        max-height: calc(100dvh - 220px);
+      }
+
+      /* Dedicated Schedule Modal (Zero native date/time inputs) */
+      dialog.schedule-modal {
+        width: min(680px, 94vw);
+        background: var(--bg-elev);
+        color: var(--ink);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-lg);
+        padding: 0;
+        overflow: hidden;
+        box-shadow: 0 36px 90px rgba(0, 0, 0, 0.8);
+      }
+
+      dialog.schedule-modal::backdrop {
+        background: rgba(0, 0, 0, 0.72);
+        backdrop-filter: blur(6px);
+      }
+
+      .sched-grid {
+        display: grid;
+        grid-template-columns: 1.15fr 1fr;
+        gap: 20px;
+        padding: 20px 22px;
+      }
+
+      .cal-card,
+      .clock-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 16px;
+        display: grid;
+        gap: 12px;
+        align-content: start;
+      }
+
+      .cal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .cal-month {
+        font-size: 13.5px;
+        font-weight: 700;
+        text-transform: capitalize;
+      }
+
+      .cal-weekdays,
+      .cal-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        text-align: center;
+      }
+
+      .cal-weekdays span {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--ink-faint);
+        padding-bottom: 4px;
+      }
+
+      .cal-day {
+        aspect-ratio: 1;
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--ink);
+        border-radius: 9px;
+        font-size: 12.5px;
+        font-weight: 500;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        position: relative;
+        transition: all 130ms var(--ease);
+      }
+
+      .cal-day:hover:not(:disabled) {
+        background: var(--bg-hover);
+        border-color: var(--border-strong);
+      }
+
+      .cal-day:disabled {
+        color: var(--ink-faint);
+        opacity: 0.32;
+        cursor: not-allowed;
+      }
+
+      .cal-day.today::after {
+        content: "";
+        position: absolute;
+        bottom: 4px;
+        width: 4px;
+        height: 4px;
+        border-radius: 999px;
+        background: var(--ink-soft);
+      }
+
+      .cal-day.active {
+        background: var(--primary);
+        color: var(--primary-ink);
+        font-weight: 700;
+      }
+
+      .cal-day.active.today::after {
+        background: var(--primary-ink);
+      }
+
+      .clock-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-radius: 12px;
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+      }
+
+      .clock-unit {
+        display: grid;
+        justify-items: center;
+        gap: 6px;
+      }
+
+      .clock-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 32px;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+
+      .clock-sep {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 28px;
+        color: var(--ink-faint);
+      }
+
+      .step-btn {
+        width: 34px;
+        height: 24px;
+        border-radius: 7px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--ink-soft);
+        font-size: 13px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+
+      .step-btn:hover {
+        background: var(--bg-hover);
+        color: var(--ink);
+        border-color: var(--border-strong);
+      }
+
+      .time-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .time-btn {
+        border: 1px solid var(--border);
+        background: var(--bg-elev);
+        color: var(--ink-soft);
+        border-radius: 9px;
+        padding: 8px 6px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 140ms var(--ease);
+      }
+
+      .time-btn:hover {
+        border-color: var(--border-strong);
+        color: var(--ink);
+      }
+
+      .time-btn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--primary-ink);
+        font-weight: 600;
+      }
+
+      @media (max-width: 640px) {
+        .sched-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .ig-dots {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        padding: 10px 0 2px;
+      }
+
+      .ig-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 150ms var(--ease);
+      }
+
+      .ig-dot.active {
+        width: 16px;
+        background: var(--primary);
+      }
+
+      @media (max-width: 780px) {
+        .post-modal-body {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .hero-greeting {
+        text-align: center;
+        margin-bottom: 26px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .ai-canvas.has-messages .hero-greeting,
+      .ai-canvas.has-messages .quick-row {
+        display: none;
+      }
+
+      .hero-greeting h1 {
+        margin: 0;
+        font-size: clamp(26px, 3.4vw, 34px);
+        font-weight: 600;
+        letter-spacing: -0.03em;
+        color: var(--ink);
+      }
+
+      .hero-greeting p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--ink-soft);
+      }
+
+      .messages {
+        display: none;
+        width: 100%;
+        max-width: 740px;
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 18px 4px 20px;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .ai-canvas.has-messages .messages {
+        display: flex;
+      }
+
+      .msg {
+        padding: 12px 16px;
+        border-radius: 16px;
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .msg.user {
+        align-self: flex-end;
+        background: var(--bg-card);
+        border: 1px solid var(--border-strong);
+        color: var(--ink);
+        max-width: 82%;
+      }
+
+      .msg.assistant {
+        align-self: flex-start;
+        background: transparent;
+        padding: 4px 2px;
+        color: var(--ink);
+        max-width: 100%;
+      }
+
+      .tool-pill {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-soft);
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+      }
+
+      /* Floating AI Composer */
+      .composer {
+        width: 100%;
+        max-width: 740px;
+        background: var(--bg-elev);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-lg);
+        padding: 14px 14px 10px 18px;
+        display: grid;
+        gap: 10px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+        transition: border-color 160ms var(--ease), box-shadow 160ms var(--ease);
+      }
+
+      .composer:focus-within {
+        border-color: rgba(255, 255, 255, 0.24);
+        box-shadow: 0 0 0 4px var(--accent-glow), 0 20px 50px rgba(0, 0, 0, 0.5);
+      }
+
+      .composer textarea {
+        width: 100%;
+        min-height: 44px;
+        max-height: 180px;
+        resize: none;
+        border: 0;
+        background: transparent;
+        color: var(--ink);
+        font: inherit;
+        font-size: 15px;
+        line-height: 1.5;
+        outline: none;
+      }
+
+      .composer textarea::placeholder {
+        color: var(--ink-faint);
+      }
+
+      .composer-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .mini-select {
+        appearance: none;
+        background: var(--bg-card);
+        color: var(--ink-soft);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 5px 9px;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      .mini-select:hover,
+      .mini-select:focus {
+        color: var(--ink);
+        border-color: var(--border-strong);
+        outline: none;
+      }
+
+      .send-circle {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        border: 0;
+        background: var(--primary);
+        color: var(--primary-ink);
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: transform 120ms var(--ease), opacity 120ms var(--ease);
+      }
+
+      .send-circle:hover:not(:disabled) {
+        transform: scale(1.05);
+      }
+
+      .send-circle:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
+      .quick-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 16px;
+        max-width: 740px;
+      }
+
+      .quick-chip {
+        border: 1px solid var(--border);
+        background: var(--bg-elev);
+        color: var(--ink-soft);
+        border-radius: 999px;
+        padding: 7px 14px;
+        font: inherit;
+        font-size: 12.5px;
+        cursor: pointer;
+        transition: all 140ms var(--ease);
+      }
+
+      .quick-chip:hover {
+        color: var(--ink);
+        border-color: var(--border-strong);
+        background: var(--bg-hover);
+      }
+
+      /* Slide-out Preview & Publish Drawer */
+      .drawer {
+        width: 460px;
+        max-width: 92vw;
+        flex-shrink: 0;
+        background: var(--bg-elev);
+        border-left: 1px solid var(--border);
+        display: none;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      .drawer.open {
+        display: flex;
+      }
+
+      .drawer-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        display: grid;
+        gap: 16px;
+        align-content: start;
+      }
+
+      .post-pills {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .post-pill {
+        flex-shrink: 0;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--ink-soft);
+        border-radius: 9px;
+        padding: 6px 10px;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .post-pill.active {
+        background: var(--bg-hover);
+        border-color: var(--border-strong);
+        color: var(--ink);
+      }
+
+      .ig-frame {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+      }
+
+      .ig-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .ig-media {
+        position: relative;
+        background: #000;
+        display: grid;
+        place-items: center;
+      }
+
+      .ig-media img {
+        width: 100%;
+        max-height: 360px;
+        object-fit: contain;
+        display: block;
+      }
+
+      .nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(9, 9, 11, 0.72);
+        color: #fff;
+        font-size: 15px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+      .nav-arrow.prev {
+        left: 8px;
+      }
+      .nav-arrow.next {
+        right: 8px;
+      }
+
+      .thumbs-strip {
+        display: flex;
+        gap: 6px;
+        padding: 8px 10px;
+        overflow-x: auto;
+        justify-content: center;
+      }
+
+      .thumbs-strip img {
+        width: 38px;
+        height: 48px;
+        object-fit: cover;
+        border-radius: 5px;
+        border: 2px solid transparent;
+        opacity: 0.5;
+        cursor: pointer;
+      }
+
+      .thumbs-strip img.active {
+        opacity: 1;
+        border-color: var(--primary);
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .field-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-soft);
+      }
+
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-faint);
+      }
+
+      .field textarea,
+      .field input {
+        width: 100%;
+        background: var(--bg);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 9px 11px;
+        font: inherit;
+        font-size: 13px;
+        line-height: 1.5;
+        outline: none;
+      }
+
+      .field textarea:focus,
+      .field input:focus {
+        border-color: rgba(255, 255, 255, 0.25);
+      }
+
+      .input-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .input-row input {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .toast {
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-strong);
+        font-size: 12.5px;
+      }
+
+      .toast a,
+      .list-row a {
+        color: #93c5fd;
+      }
+
+      .list-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        font-size: 12px;
+      }
+
+      /* Settings Modal */
+      dialog.modal {
+        width: min(600px, 94vw);
+        max-height: 88vh;
+        background: var(--bg-elev);
+        color: var(--ink);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-lg);
+        padding: 0;
+        overflow: hidden;
+        box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7);
+      }
+
+      dialog.modal::backdrop {
+        background: rgba(0, 0, 0, 0.72);
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-shell {
+        display: flex;
+        flex-direction: column;
+        max-height: 88vh;
+      }
+
+      .modal-head {
+        display: grid;
+        gap: 12px;
+        padding: 18px 22px 14px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .modal-body {
+        overflow-y: auto;
+        padding: 18px 22px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .modal-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+        background: var(--bg);
+      }
+
+      .settings-panel {
+        display: none;
+        gap: 14px;
+      }
+
+      .settings-panel.active {
+        display: grid;
+      }
+
+      .settings-section {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 14px 16px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .settings-section-head {
+        display: grid;
+        gap: 3px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .settings-section-title {
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .settings-section-desc {
+        font-size: 12px;
+        color: var(--ink-faint);
+      }
+
+      .analyze-log {
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11.5px;
+        line-height: 1.55;
+        color: var(--ink-soft);
+        max-height: 180px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        display: none;
+      }
+
+      .analyze-log.open {
+        display: block;
+      }
+
+      .guide-editor {
+        font-family: "JetBrains Mono", monospace !important;
+        font-size: 12px !important;
+        line-height: 1.55 !important;
+        min-height: 200px;
+      }
+
+      .settings-tabs-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      @media (max-width: 820px) {
+        .drawer {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          max-width: 100%;
+          z-index: 10;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-group">
+        <img class="studio-logo" src="/icon.svg" alt="Social Studio" />
+        <div id="brandTabs" class="segmented"></div>
+      </div>
+      <div class="topbar-group">
+        <button id="scrollGalleryBtn" class="btn" type="button">Modelos (0)</button>
+        <button id="resetChatBtn" class="btn" type="button" title="Nova conversa">Nova</button>
+        <button id="openChatsListBtn" class="btn icon-btn" type="button" title="Histórico de conversas">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </button>
+        <button id="openSchedulesListBtn" class="btn icon-btn" type="button" title="Agendamentos">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <polyline points="12 7 12 12 15.5 14"></polyline>
+          </svg>
+          <span id="schedulesBadge" class="badge-count hidden"></span>
+        </button>
+        <a href="/guia" class="btn icon-btn" title="Guia de configuração e variáveis" style="text-decoration:none">?</a>
+        <button id="openSettingsBtn" class="btn" type="button" title="Configurações">⚙</button>
+      </div>
+    </header>
+
+    <dialog id="settingsModal" class="modal">
+      <form id="settingsForm" class="modal-shell">
+        <div class="modal-head">
+          <div class="row" style="justify-content: space-between">
+            <strong style="font-size: 15px">Configurações & Perfis</strong>
+            <div class="row" style="gap: 6px">
+              <a href="/guia" class="btn btn-sm" style="text-decoration: none">Como conseguir as chaves?</a>
+              <button id="closeSettingsBtn" class="btn btn-sm" type="button">Fechar</button>
+            </div>
+          </div>
+          <div class="settings-tabs-wrap">
+            <div id="settingsTabs" class="segmented"></div>
+          </div>
+        </div>
+
+        <div id="settingsBody" class="modal-body"></div>
+
+        <div class="modal-foot">
+          <span id="settingsFootHint" class="mono">Salvo localmente</span>
+          <button id="settingsSubmitBtn" class="btn btn-primary" type="submit">Salvar alterações</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="shell">
+      <main id="aiCanvas" class="ai-canvas">
+        <div class="hero-greeting">
+          <h1 id="heroTitle">O que vamos criar para o Ranggo hoje?</h1>
+          <p id="heroSub">Descreva o post, carrossel ou story que você quer publicar.</p>
+        </div>
+
+        <div id="messages" class="messages"></div>
+
+        <form id="chatForm" class="composer">
+          <textarea
+            id="chatInput"
+            placeholder="Peça um post, carrossel, story ou ideia de pauta..."
+            rows="2"
+          ></textarea>
+          <div class="composer-bar">
+            <div class="row" style="gap: 6px">
+              <select id="modelSelect" class="mini-select" title="Modelo">
+                <option value="">Padrão</option>
+                <option value="neon">Neon</option>
+                <option value="gemini-2.5-flash">2.5 Flash</option>
+                <option value="gemini-2.5-pro">2.5 Pro</option>
+                <option value="gemini-3-flash-preview">3 Flash</option>
+              </select>
+              <select id="thinkingSelect" class="mini-select" title="Esforço">
+                <option value="">Esforço: Auto</option>
+                <option value="minimal">Mínimo</option>
+                <option value="low">Baixo</option>
+                <option value="medium">Médio</option>
+                <option value="high">Alto</option>
+                <option value="xhigh">Máximo</option>
+              </select>
+            </div>
+            <button id="sendBtn" class="send-circle" type="submit" title="Enviar (Enter)">↑</button>
+          </div>
+        </form>
+
+        <div class="quick-row">
+          <button
+            class="quick-chip"
+            type="button"
+            onclick="usePrompt('Crie um carrossel de 4 slides mostrando uma novidade do produto.')"
+          >
+            Carrossel de novidade
+          </button>
+          <button
+            class="quick-chip"
+            type="button"
+            onclick="usePrompt('Crie um Story 9:16 direto para postar hoje no horário de pico.')"
+          >
+            Story para hoje
+          </button>
+          <button
+            class="quick-chip"
+            type="button"
+            onclick="usePrompt('Sugira 3 ideias de posts para esta semana sem repetir os últimos.')"
+          >
+            Sugerir 3 pautas
+          </button>
+        </div>
+
+        <button id="scrollCueBtn" class="scroll-cue" type="button">↓ Modelos anteriores</button>
+      </main>
+    </div>
+
+    <section id="gallerySection" class="gallery-section">
+      <div class="gallery-head">
+        <h2>Modelos anteriores</h2>
+        <button id="refreshPostsBtn" class="btn btn-sm" type="button">↻ Atualizar</button>
+      </div>
+      <div id="galleryGrid" class="gallery-grid"></div>
+    </section>
+
+    <dialog id="postModal" class="post-modal">
+      <div class="modal-shell">
+        <div class="modal-head" style="padding: 14px 20px">
+          <div class="row" style="justify-content: space-between">
+            <strong id="postModalTitle" style="font-size: 15px">Prévia do Instagram</strong>
+            <button id="closePostModalBtn" class="btn btn-sm" type="button">Fechar</button>
+          </div>
+        </div>
+        <div id="postModalBody" class="post-modal-body"></div>
+      </div>
+    </dialog>
+
+    <dialog id="chatsListModal" class="modal">
+      <div class="modal-shell">
+        <div class="modal-head" style="padding: 16px 22px">
+          <div class="row" style="justify-content: space-between">
+            <strong id="chatsListTitle" style="font-size: 15px">Conversas salvas</strong>
+            <button id="closeChatsListBtn" class="btn btn-sm" type="button">Fechar</button>
+          </div>
+        </div>
+        <div id="chatsListBody" class="modal-body"></div>
+      </div>
+    </dialog>
+
+    <dialog id="schedulesListModal" class="modal">
+      <div class="modal-shell">
+        <div class="modal-head" style="padding: 16px 22px">
+          <div class="row" style="justify-content: space-between">
+            <strong id="schedulesListTitle" style="font-size: 15px">Agendamentos</strong>
+            <button id="closeSchedulesListBtn" class="btn btn-sm" type="button">Fechar</button>
+          </div>
+        </div>
+        <div id="schedulesListBody" class="modal-body"></div>
+      </div>
+    </dialog>
+
+    <dialog id="scheduleModal" class="schedule-modal">
+      <div class="modal-shell">
+        <div class="modal-head" style="padding: 16px 22px">
+          <div class="row" style="justify-content: space-between">
+            <strong style="font-size: 15px">Agendar publicação</strong>
+            <button id="closeScheduleModalBtn" class="btn btn-sm" type="button">Fechar</button>
+          </div>
+        </div>
+        <div id="scheduleModalBody" class="sched-grid"></div>
+        <div class="modal-foot">
+          <span id="scheduleSummary" class="mono"></span>
+          <button id="confirmScheduleBtn" class="btn btn-primary" type="button">
+            Confirmar agendamento
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <div id="cardContextMenu" class="context-menu" role="menu"></div>
+    <div id="selectionBar" class="selection-bar"></div>
+    <div id="globalToast" class="floating-toast"></div>
+
+    <script>
+      const state = {
+        brands: [],
+        brandId: "ranggo",
+        posts: [],
+        schedules: [],
+        history: [],
+        chats: [],
+        currentChatId: null,
+        currentMessages: [],
+        selectedPostId: null,
+        editingScheduleId: null,
+        selectedIds: new Set(),
+        slideIndex: 0,
+        isStreaming: false,
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      window.usePrompt = (text) => {
+        $("chatInput").value = text;
+        $("chatInput").focus();
+      };
+
+      async function loadBrands() {
+        const res = await fetch("/api/brands");
+        state.brands = await res.json();
+        if (!state.brands.some((b) => b.id === state.brandId) && state.brands.length > 0) {
+          state.brandId = state.brands[0].id;
+        }
+        renderBrandTabs();
+        await selectBrand(state.brandId);
+      }
+
+      function renderBrandTabs() {
+        const container = $("brandTabs");
+        container.innerHTML = "";
+        for (const b of state.brands) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "seg-btn" + (b.id === state.brandId ? " active" : "");
+          const isOk = b.isConnected && b.profile && !b.profile.error;
+          btn.innerHTML = `<span class="status-dot ${isOk ? "ok" : ""}"></span>${b.name}`;
+          btn.onclick = () => selectBrand(b.id);
+          container.appendChild(btn);
+        }
+        const current = state.brands.find((b) => b.id === state.brandId);
+        if (current) {
+          applyBrandTheme(current);
+          $("heroTitle").textContent = `O que vamos criar para o ${current.name} hoje?`;
+          $("heroSub").textContent = current.profile?.username
+            ? `Conectado em @${current.profile.username} · pronto para criar e publicar em 1 clique.`
+            : `Configure o token do Instagram em ⚙ quando quiser publicar direto por aqui.`;
+        }
+      }
+
+      function applyBrandTheme(brand) {
+        document.documentElement.style.setProperty("--brand-accent", brand.accent || "#6366f1");
+      }
+
+      async function selectBrand(brandId) {
+        state.brandId = brandId;
+        state.selectedPostId = null;
+        state.editingScheduleId = null;
+        state.currentChatId = null;
+        state.currentMessages = [];
+        state.selectedIds.clear();
+        state.slideIndex = 0;
+        $("messages").innerHTML = "";
+        $("aiCanvas").classList.remove("has-messages");
+        hideContextMenu();
+        renderBrandTabs();
+        await Promise.all([loadPosts(), loadChats()]);
+      }
+
+      async function loadChats() {
+        const res = await fetch(`/api/brands/${state.brandId}/chats`);
+        state.chats = res.ok ? await res.json() : [];
+        if ($("chatsListModal").open) {
+          renderChatsListModal();
+        }
+      }
+
+      async function saveCurrentChat() {
+        if (state.currentMessages.length === 0) return;
+        const res = await fetch(`/api/brands/${state.brandId}/chats`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: state.currentChatId,
+            messages: state.currentMessages,
+          }),
+        });
+        if (res.ok) {
+          const saved = await res.json();
+          state.currentChatId = saved.id;
+          await loadChats();
+        }
+      }
+
+      function renderMessagesFromState() {
+        const msgs = $("messages");
+        msgs.innerHTML = "";
+        if (state.currentMessages.length === 0) {
+          $("aiCanvas").classList.remove("has-messages");
+          return;
+        }
+        $("aiCanvas").classList.add("has-messages");
+        for (const m of state.currentMessages) {
+          if (m.role === "assistant" && Array.isArray(m.tools)) {
+            for (const toolName of m.tools) {
+              const badge = document.createElement("span");
+              badge.className = "tool-pill";
+              badge.textContent = "⚡ " + toolName;
+              msgs.appendChild(badge);
+            }
+          }
+          const el = document.createElement("div");
+          el.className = "msg " + (m.role === "user" ? "user" : "assistant");
+          el.textContent = m.text || "";
+          msgs.appendChild(el);
+          if (m.postId) {
+            const openBtn = document.createElement("button");
+            openBtn.type = "button";
+            openBtn.className = "btn btn-sm";
+            openBtn.style.alignSelf = "flex-start";
+            openBtn.textContent = "Abrir arte gerada ↗";
+            openBtn.onclick = () => openPostModal(m.postId);
+            msgs.appendChild(openBtn);
+          }
+        }
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      function formatChatDate(iso) {
+        if (!iso) return "";
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return iso;
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} às ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
+
+      function renderChatsListModal() {
+        const body = $("chatsListBody");
+        const brand = state.brands.find((b) => b.id === state.brandId);
+        $("chatsListTitle").textContent = `Conversas salvas · ${brand?.name || ""}`;
+        if (state.chats.length === 0) {
+          body.innerHTML = `
+            <div class="empty-state">
+              <strong style="color:var(--ink-soft);font-size:14px">Nenhuma conversa salva ainda</strong>
+              <span style="font-size:12.5px">Suas conversas com o agente são salvas automaticamente aqui.</span>
+            </div>
+          `;
+          return;
+        }
+        body.innerHTML = state.chats
+          .map(
+            (c) => `
+              <div class="list-row" style="padding:12px 14px">
+                <div class="sched-info">
+                  <strong>${escapeAttr(c.title || "Conversa")}</strong>
+                  <span class="mono">${(c.messages || []).length} mensagens · ${formatChatDate(c.updatedAt)}</span>
+                </div>
+                <div class="row" style="flex-wrap:nowrap;gap:6px">
+                  <button type="button" class="btn btn-sm" onclick="openSavedChat('${c.id}')">Abrir</button>
+                  <button type="button" class="btn btn-sm btn-danger" onclick="deleteSavedChat('${c.id}')">Excluir</button>
+                </div>
+              </div>
+            `,
+          )
+          .join("");
+      }
+
+      window.openSavedChat = (chatId) => {
+        const chat = state.chats.find((c) => c.id === chatId);
+        if (!chat) return;
+        state.currentChatId = chat.id;
+        state.currentMessages = [...(chat.messages || [])];
+        renderMessagesFromState();
+        $("chatsListModal").close();
+      };
+
+      window.deleteSavedChat = async (chatId) => {
+        await fetch(`/api/brands/${state.brandId}/chats/${encodeURIComponent(chatId)}`, {
+          method: "DELETE",
+        });
+        if (state.currentChatId === chatId) {
+          state.currentChatId = null;
+          state.currentMessages = [];
+          renderMessagesFromState();
+        }
+        await loadChats();
+      };
+
+      async function loadPosts() {
+        const res = await fetch(`/api/brands/${state.brandId}/posts`);
+        const data = await res.json();
+        state.posts = data.posts || [];
+        state.schedules = data.schedules || [];
+        state.history = data.history || [];
+        $("scrollGalleryBtn").textContent = `Modelos (${state.posts.length})`;
+        const pendingCount = state.schedules.filter((s) => s.status === "pending").length;
+        const badge = $("schedulesBadge");
+        badge.textContent = pendingCount > 0 ? String(pendingCount) : "";
+        badge.classList.toggle("hidden", pendingCount === 0);
+        renderGallery();
+        if ($("schedulesListModal").open) {
+          renderSchedulesListModal();
+        }
+        if ($("postModal").open && state.selectedPostId) {
+          renderPostModal();
+        }
+      }
+
+      function typeLabel(type) {
+        if (type === "carousel") return "Carrossel";
+        if (type === "story") return "Story";
+        return "Post";
+      }
+
+      let toastTimer = null;
+      function showGlobalToast(message) {
+        const el = $("globalToast");
+        el.textContent = message;
+        el.classList.add("open");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove("open"), 3400);
+      }
+
+      function hideContextMenu() {
+        $("cardContextMenu").classList.remove("open");
+      }
+
+      function toggleSelectPost(postId) {
+        if (state.selectedIds.has(postId)) {
+          state.selectedIds.delete(postId);
+        } else {
+          state.selectedIds.add(postId);
+        }
+        renderGallery();
+        renderSelectionBar();
+      }
+
+      function renderSelectionBar() {
+        const bar = $("selectionBar");
+        const count = state.selectedIds.size;
+        if (count === 0) {
+          bar.classList.remove("open");
+          bar.innerHTML = "";
+          return;
+        }
+        const selectedPosts = state.posts.filter((p) => state.selectedIds.has(p.id));
+        bar.innerHTML = `
+          <span class="selection-count">${count} ${count > 1 ? "selecionados" : "selecionado"}</span>
+          <button type="button" class="btn btn-sm" id="selDupBtn">Duplicar</button>
+          <button type="button" class="btn btn-sm" id="selDownloadBtn">Baixar</button>
+          <button type="button" class="btn btn-sm btn-danger" id="selDeleteBtn">Apagar</button>
+          <button type="button" class="btn btn-sm" id="selClearBtn">Cancelar</button>
+        `;
+        bar.classList.add("open");
+        $("selDupBtn").onclick = () => duplicatePosts(selectedPosts);
+        $("selDownloadBtn").onclick = () => downloadPostsToFolder(selectedPosts);
+        $("selDeleteBtn").onclick = () => deletePosts(selectedPosts);
+        $("selClearBtn").onclick = () => {
+          state.selectedIds.clear();
+          renderGallery();
+          renderSelectionBar();
+        };
+      }
+
+      async function duplicatePosts(posts) {
+        for (const post of posts) {
+          await fetch("/api/posts/duplicate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ brandId: state.brandId, postId: post.id }),
+          });
+        }
+        state.selectedIds.clear();
+        await loadPosts();
+        renderSelectionBar();
+        showGlobalToast(posts.length > 1 ? `${posts.length} modelos duplicados.` : "Modelo duplicado!");
+      }
+
+      async function deletePosts(posts) {
+        const label =
+          posts.length === 1
+            ? `Apagar o modelo "${posts[0].title}"? Esta ação remove a pasta e as imagens.`
+            : `Apagar ${posts.length} modelos selecionados? Esta ação remove as pastas e imagens.`;
+        if (!confirm(label)) return;
+        for (const post of posts) {
+          await fetch(`/api/brands/${state.brandId}/posts/${encodeURIComponent(post.id)}`, {
+            method: "DELETE",
+          });
+          state.selectedIds.delete(post.id);
+        }
+        await loadPosts();
+        renderSelectionBar();
+        showGlobalToast(posts.length > 1 ? `${posts.length} modelos apagados.` : "Modelo apagado.");
+      }
+
+      async function downloadPostsToFolder(posts) {
+        if (typeof window.showDirectoryPicker === "function") {
+          try {
+            const rootDir = await window.showDirectoryPicker({ mode: "readwrite" });
+            for (const post of posts) {
+              const postDir = await rootDir.getDirectoryHandle(post.slug, { create: true });
+              for (const slide of post.slides) {
+                const res = await fetch(imgUrl(post, slide));
+                const blob = await res.blob();
+                const fileHandle = await postDir.getFileHandle(slide, { create: true });
+                const writable = await fileHandle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+              }
+              if (post.caption && post.caption.trim()) {
+                const txtHandle = await postDir.getFileHandle("legenda.txt", { create: true });
+                const writable = await txtHandle.createWritable();
+                await writable.write(post.caption);
+                await writable.close();
+              }
+            }
+            state.selectedIds.clear();
+            renderGallery();
+            renderSelectionBar();
+            showGlobalToast(
+              posts.length === 1
+                ? `Pasta "${posts[0].slug}" salva em ${rootDir.name}!`
+                : `${posts.length} pastas salvas em ${rootDir.name}!`,
+            );
+            return;
+          } catch (err) {
+            if (err && err.name === "AbortError") return;
+          }
+        }
+        for (const post of posts) {
+          const a = document.createElement("a");
+          a.href = `/api/brands/${state.brandId}/posts/${encodeURIComponent(post.id)}/zip`;
+          a.download = `${post.slug}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }
+        showGlobalToast("Download iniciado!");
+      }
+
+      function openCardContextMenu(e, post) {
+        e.preventDefault();
+        const menu = $("cardContextMenu");
+        const isSelected = state.selectedIds.has(post.id);
+        menu.innerHTML = `
+          <button type="button" class="context-item" data-act="select">
+            <span>${isSelected ? "☑" : "☐"}</span>
+            <span>${isSelected ? "Desmarcar" : "Selecionar"}</span>
+          </button>
+          <button type="button" class="context-item" data-act="duplicate">
+            <span>⧉</span>
+            <span>Duplicar</span>
+          </button>
+          <button type="button" class="context-item" data-act="download">
+            <span>↓</span>
+            <span>Baixar em pasta...</span>
+          </button>
+          <div class="context-sep"></div>
+          <button type="button" class="context-item danger" data-act="delete">
+            <span>✕</span>
+            <span>Apagar</span>
+          </button>
+        `;
+        menu.classList.add("open");
+        const rect = menu.getBoundingClientRect();
+        const x = Math.min(e.clientX, window.innerWidth - rect.width - 12);
+        const y = Math.min(e.clientY, window.innerHeight - rect.height - 12);
+        menu.style.left = `${Math.max(8, x)}px`;
+        menu.style.top = `${Math.max(8, y)}px`;
+
+        menu.querySelector('[data-act="select"]').onclick = () => {
+          hideContextMenu();
+          toggleSelectPost(post.id);
+        };
+        menu.querySelector('[data-act="duplicate"]').onclick = () => {
+          hideContextMenu();
+          duplicatePosts([post]);
+        };
+        menu.querySelector('[data-act="download"]').onclick = () => {
+          hideContextMenu();
+          downloadPostsToFolder([post]);
+        };
+        menu.querySelector('[data-act="delete"]').onclick = () => {
+          hideContextMenu();
+          deletePosts([post]);
+        };
+      }
+
+      document.addEventListener("click", (e) => {
+        if (!$("cardContextMenu").contains(e.target)) hideContextMenu();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          hideContextMenu();
+          if (state.selectedIds.size > 0 && !$("postModal").open) {
+            state.selectedIds.clear();
+            renderGallery();
+            renderSelectionBar();
+          }
+        }
+      });
+
+      function renderGallery() {
+        const grid = $("galleryGrid");
+        grid.innerHTML = "";
+        grid.classList.toggle("selecting", state.selectedIds.size > 0);
+        if (state.posts.length === 0) {
+          grid.innerHTML = `<p class="mono">Nenhum modelo criado ainda para esta marca.</p>`;
+          return;
+        }
+        for (const post of state.posts) {
+          const isSelected = state.selectedIds.has(post.id);
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "gallery-card" + (isSelected ? " selected" : "");
+          card.innerHTML = `
+            <div class="gallery-thumb">
+              <img src="${imgUrl(post, post.slides[0])}" alt="${post.title}" loading="lazy" />
+              <span class="gallery-check">${isSelected ? "✓" : ""}</span>
+              <span class="gallery-badge">${typeLabel(post.type)} · ${post.aspect || "4:5"}</span>
+            </div>
+            <div class="gallery-meta">
+              <strong>${post.title}</strong>
+              <span>${post.slides.length} ${post.slides.length > 1 ? "imagens" : "imagem"} · ${post.width || 1080}×${post.height || 1350}</span>
+            </div>
+          `;
+          card.onclick = () => {
+            if (state.selectedIds.size > 0) {
+              toggleSelectPost(post.id);
+            } else {
+              openPostModal(post.id);
+            }
+          };
+          card.oncontextmenu = (e) => openCardContextMenu(e, post);
+          grid.appendChild(card);
+        }
+      }
+
+      function openPostModal(postId, scheduleId = null) {
+        state.selectedPostId = postId;
+        state.editingScheduleId = scheduleId;
+        state.slideIndex = 0;
+        renderPostModal();
+        if (!$("postModal").open) {
+          $("postModal").showModal();
+        }
+      }
+
+      function formatScheduleDate(iso) {
+        if (!iso) return "";
+        const [datePart, timePart = "00:00"] = iso.split("T");
+        const [y, m, d] = datePart.split("-");
+        if (!y || !m || !d) return iso;
+        return `${d}/${m}/${y} às ${timePart.slice(0, 5)}`;
+      }
+
+      function renderSchedulesListModal() {
+        const body = $("schedulesListBody");
+        const brand = state.brands.find((b) => b.id === state.brandId);
+        $("schedulesListTitle").textContent = `Agendamentos · ${brand?.name || ""}`;
+
+        const sorted = [...state.schedules].sort((a, b) => {
+          if (a.status === "pending" && b.status !== "pending") return -1;
+          if (a.status !== "pending" && b.status === "pending") return 1;
+          return (a.scheduledAt || "").localeCompare(b.scheduledAt || "");
+        });
+
+        if (sorted.length === 0) {
+          body.innerHTML = `
+            <div class="empty-state">
+              <strong style="color:var(--ink-soft);font-size:14px">Nenhum agendamento</strong>
+              <span style="font-size:12.5px">Abra qualquer modelo abaixo e clique em Agendar para programar uma publicação.</span>
+            </div>
+          `;
+          return;
+        }
+
+        body.innerHTML = sorted
+          .map((s) => {
+            const post = state.posts.find((p) => p.id === s.postId);
+            const title = post?.title || s.postId.split(":")[1] || s.postId;
+            const firstSlide = (s.slides && s.slides[0]) || post?.slides?.[0];
+            const thumb = post && firstSlide ? `<img class="sched-thumb" src="${imgUrl(post, firstSlide)}" alt="${title}" />` : `<div class="sched-thumb"></div>`;
+            const statusLabel =
+              s.status === "published" ? "Publicado" : s.status === "failed" ? "Falhou" : "Agendado";
+            const statusClass = s.status === "published" ? "published" : s.status === "failed" ? "failed" : "";
+            return `
+              <div class="sched-list-item">
+                ${thumb}
+                <div class="sched-info">
+                  <strong>${title}</strong>
+                  <div class="sched-meta">
+                    <span class="status-pill ${statusClass}">${statusLabel}</span>
+                    <span>${typeLabel(s.type)}</span>
+                    <span class="mono">${formatScheduleDate(s.scheduledAt)}</span>
+                  </div>
+                  ${s.error ? `<span class="mono" style="color:#fca5a5">${s.error}</span>` : ""}
+                </div>
+                <div class="row" style="flex-wrap:nowrap;gap:6px">
+                  ${s.status !== "published" ? `<button type="button" class="btn btn-sm" onclick="editSchedule('${s.id}')">Editar</button>` : ""}
+                  <button type="button" class="btn btn-sm btn-danger" onclick="cancelSchedule('${s.id}')">Excluir</button>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      window.editSchedule = (scheduleId) => {
+        const entry = state.schedules.find((s) => s.id === scheduleId);
+        if (!entry) return;
+        $("schedulesListModal").close();
+        openPostModal(entry.postId, entry.id);
+      };
+
+      function imgUrl(post, slide) {
+        return `/api/brands/${state.brandId}/image/${encodeURIComponent(post.id)}/${encodeURIComponent(slide)}?t=${post.updatedAt}`;
+      }
+
+      const PEAK_TIMES = ["11:30", "12:00", "18:00", "18:30", "19:00", "19:30", "20:00", "21:00"];
+      const MONTHS_PT = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+      ];
+
+      const schedState = {
+        viewYear: new Date().getFullYear(),
+        viewMonth: new Date().getMonth(),
+        selectedDate: new Date(Date.now() + 86400000),
+        hour: 18,
+        minute: 30,
+        onConfirm: null,
+      };
+
+      function dateIso(d) {
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+      }
+
+      function openScheduleModal(onConfirm, initialIso = null) {
+        if (initialIso && initialIso.includes("T")) {
+          const [datePart, timePart] = initialIso.split("T");
+          const [y, m, d] = datePart.split("-").map(Number);
+          const [h, min] = timePart.split(":").map(Number);
+          const parsed = new Date(y, (m || 1) - 1, d || 1);
+          schedState.selectedDate = parsed;
+          schedState.viewYear = parsed.getFullYear();
+          schedState.viewMonth = parsed.getMonth();
+          schedState.hour = Number.isFinite(h) ? h : 18;
+          schedState.minute = Number.isFinite(min) ? min : 30;
+        } else {
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          schedState.selectedDate = tomorrow;
+          schedState.viewYear = tomorrow.getFullYear();
+          schedState.viewMonth = tomorrow.getMonth();
+          schedState.hour = 18;
+          schedState.minute = 30;
+        }
+        schedState.onConfirm = onConfirm;
+        renderScheduleModal();
+        $("scheduleModal").showModal();
+      }
+
+      function renderScheduleModal() {
+        const pad = (n) => String(n).padStart(2, "0");
+        const today = new Date();
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const todayIso = dateIso(todayStart);
+        const selIso = dateIso(schedState.selectedDate);
+        const timeStr = `${pad(schedState.hour)}:${pad(schedState.minute)}`;
+
+        const firstWeekday = new Date(schedState.viewYear, schedState.viewMonth, 1).getDay();
+        const daysInMonth = new Date(schedState.viewYear, schedState.viewMonth + 1, 0).getDate();
+
+        let cellsHtml = "";
+        for (let i = 0; i < firstWeekday; i += 1) {
+          cellsHtml += `<span></span>`;
+        }
+        for (let day = 1; day <= daysInMonth; day += 1) {
+          const d = new Date(schedState.viewYear, schedState.viewMonth, day);
+          const iso = dateIso(d);
+          const isPast = d < todayStart;
+          const classes = [
+            "cal-day",
+            iso === todayIso ? "today" : "",
+            iso === selIso ? "active" : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
+          cellsHtml += `<button type="button" class="${classes}" data-iso="${iso}" ${isPast ? "disabled" : ""}>${day}</button>`;
+        }
+
+        $("scheduleModalBody").innerHTML = `
+          <div class="cal-card">
+            <div class="cal-head">
+              <button type="button" class="btn btn-sm" id="calPrevBtn">‹</button>
+              <span class="cal-month">${MONTHS_PT[schedState.viewMonth]} ${schedState.viewYear}</span>
+              <button type="button" class="btn btn-sm" id="calNextBtn">›</button>
+            </div>
+            <div class="row" style="gap:6px">
+              <button type="button" class="quick-chip" id="quickTodayBtn">Hoje</button>
+              <button type="button" class="quick-chip" id="quickTomorrowBtn">Amanhã</button>
+            </div>
+            <div class="cal-weekdays">
+              <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+            </div>
+            <div class="cal-days" id="calDaysGrid">${cellsHtml}</div>
+          </div>
+
+          <div class="clock-card">
+            <span class="field-label-row">Horário exato</span>
+            <div class="clock-display">
+              <div class="clock-unit">
+                <button type="button" class="step-btn" id="hourUp">▲</button>
+                <span class="clock-num">${pad(schedState.hour)}</span>
+                <button type="button" class="step-btn" id="hourDown">▼</button>
+              </div>
+              <span class="clock-sep">:</span>
+              <div class="clock-unit">
+                <button type="button" class="step-btn" id="minUp">▲</button>
+                <span class="clock-num">${pad(schedState.minute)}</span>
+                <button type="button" class="step-btn" id="minDown">▼</button>
+              </div>
+            </div>
+            <span class="field-label-row">Horários de pico</span>
+            <div class="time-grid" id="peakGrid">
+              ${PEAK_TIMES.map((t) => `<button type="button" class="time-btn ${t === timeStr ? "active" : ""}" data-time="${t}">${t}</button>`).join("")}
+            </div>
+          </div>
+        `;
+
+        const d = schedState.selectedDate;
+        $("scheduleSummary").textContent = `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} às ${timeStr}`;
+
+        $("calPrevBtn").onclick = () => {
+          schedState.viewMonth -= 1;
+          if (schedState.viewMonth < 0) {
+            schedState.viewMonth = 11;
+            schedState.viewYear -= 1;
+          }
+          renderScheduleModal();
+        };
+        $("calNextBtn").onclick = () => {
+          schedState.viewMonth += 1;
+          if (schedState.viewMonth > 11) {
+            schedState.viewMonth = 0;
+            schedState.viewYear += 1;
+          }
+          renderScheduleModal();
+        };
+        $("quickTodayBtn").onclick = () => {
+          schedState.selectedDate = new Date();
+          schedState.viewYear = schedState.selectedDate.getFullYear();
+          schedState.viewMonth = schedState.selectedDate.getMonth();
+          renderScheduleModal();
+        };
+        $("quickTomorrowBtn").onclick = () => {
+          const t = new Date();
+          t.setDate(t.getDate() + 1);
+          schedState.selectedDate = t;
+          schedState.viewYear = t.getFullYear();
+          schedState.viewMonth = t.getMonth();
+          renderScheduleModal();
+        };
+        $("calDaysGrid")
+          .querySelectorAll("button[data-iso]")
+          .forEach((btn) => {
+            btn.onclick = () => {
+              const [y, m, day] = btn.dataset.iso.split("-").map(Number);
+              schedState.selectedDate = new Date(y, m - 1, day);
+              renderScheduleModal();
+            };
+          });
+        $("hourUp").onclick = () => {
+          schedState.hour = (schedState.hour + 1) % 24;
+          renderScheduleModal();
+        };
+        $("hourDown").onclick = () => {
+          schedState.hour = (schedState.hour + 23) % 24;
+          renderScheduleModal();
+        };
+        $("minUp").onclick = () => {
+          schedState.minute = (schedState.minute + 5) % 60;
+          renderScheduleModal();
+        };
+        $("minDown").onclick = () => {
+          schedState.minute = (schedState.minute + 55) % 60;
+          renderScheduleModal();
+        };
+        $("peakGrid")
+          .querySelectorAll("button")
+          .forEach((btn) => {
+            btn.onclick = () => {
+              const [h, m] = btn.dataset.time.split(":").map(Number);
+              schedState.hour = h;
+              schedState.minute = m;
+              renderScheduleModal();
+            };
+          });
+      }
+
+      $("closeScheduleModalBtn").onclick = () => $("scheduleModal").close();
+      $("confirmScheduleBtn").onclick = async () => {
+        const pad = (n) => String(n).padStart(2, "0");
+        const iso = `${dateIso(schedState.selectedDate)}T${pad(schedState.hour)}:${pad(schedState.minute)}`;
+        $("scheduleModal").close();
+        if (schedState.onConfirm) {
+          await schedState.onConfirm(iso);
+        }
+      };
+
+      function renderPostModal() {
+        const body = $("postModalBody");
+        const post = state.posts.find((p) => p.id === state.selectedPostId) || state.posts[0];
+        if (!post) return;
+        state.selectedPostId = post.id;
+        $("postModalTitle").textContent = post.title;
+
+        const brand = state.brands.find((b) => b.id === state.brandId);
+        const handle = brand?.profile?.username ? `@${brand.profile.username}` : brand?.name || "";
+        const canPublish = Boolean(brand?.isConnected && brand?.profile && !brand?.profile?.error);
+        const currentSlide = post.slides[state.slideIndex] || post.slides[0];
+        const editingSchedule = state.editingScheduleId
+          ? state.schedules.find((s) => s.id === state.editingScheduleId) || null
+          : null;
+        if (!editingSchedule) state.editingScheduleId = null;
+        let currentType = editingSchedule ? editingSchedule.type : post.type;
+        const initialCaption = editingSchedule ? editingSchedule.caption || "" : post.caption || "";
+
+        body.innerHTML = `
+          <div class="ig-frame">
+            <div class="ig-head">
+              <span>${handle}</span>
+              <span class="mono">${String(state.slideIndex + 1).padStart(2, "0")} / ${String(post.slides.length).padStart(2, "0")}</span>
+            </div>
+            <div class="ig-media">
+              <img src="${imgUrl(post, currentSlide)}" alt="${currentSlide}" />
+              ${post.slides.length > 1 ? `<button class="nav-arrow prev" id="prevSlideBtn" type="button">‹</button><button class="nav-arrow next" id="nextSlideBtn" type="button">›</button>` : ""}
+            </div>
+            ${post.slides.length > 1 ? `<div class="ig-dots">${post.slides.map((_, i) => `<span class="ig-dot ${i === state.slideIndex ? "active" : ""}"></span>`).join("")}</div>` : ""}
+            <div class="thumbs-strip" id="thumbsRow"></div>
+          </div>
+
+          <div style="display:grid;gap:14px">
+            ${
+              editingSchedule
+                ? `<div class="sched-edit-banner">
+                    <span>Agendado para <strong>${formatScheduleDate(editingSchedule.scheduledAt)}</strong></span>
+                    <button id="deleteEditingScheduleBtn" class="btn btn-sm btn-danger" type="button">Excluir</button>
+                  </div>`
+                : ""
+            }
+            <div class="row" style="justify-content:space-between">
+              <div class="segmented" id="typeSegmented">
+                <button type="button" class="seg-btn ${currentType === "feed" ? "active" : ""}" data-type="feed" ${post.slides.length > 1 ? 'title="Publica apenas o 1º slide"' : ""}>Post</button>
+                <button type="button" class="seg-btn ${currentType === "carousel" ? "active" : ""}" data-type="carousel" ${post.slides.length < 2 ? "disabled" : ""}>Carrossel</button>
+                <button type="button" class="seg-btn ${currentType === "story" ? "active" : ""}" data-type="story">Story</button>
+              </div>
+              <span class="mono">${post.aspect || "4:5"} · ${post.width || 1080}×${post.height || 1350}</span>
+            </div>
+
+            <div class="field" id="captionField" style="${currentType === "story" ? "display:none" : ""}">
+              <div class="field-label-row">
+                <span>Legenda</span>
+                <span id="charCount" class="mono">${initialCaption.length} / 2200</span>
+              </div>
+              <textarea id="captionInput" rows="6" placeholder="Escreva ou ajuste a legenda...">${initialCaption}</textarea>
+            </div>
+
+            <div class="row">
+              <button id="publishNowBtn" class="btn btn-primary" type="button" style="flex:1" ${canPublish ? "" : "disabled"}>
+                Publicar agora
+              </button>
+              <button id="openScheduleBtn" class="btn" type="button" ${canPublish ? "" : "disabled"}>
+                ${editingSchedule ? "Alterar horário" : "Agendar"}
+              </button>
+              <button id="saveMetaBtn" class="btn" type="button">Salvar</button>
+            </div>
+
+            <div id="publishToast" class="toast" style="display:none"></div>
+            ${renderSchedulesHtml()}
+            ${renderHistoryHtml()}
+          </div>
+        `;
+
+        if (post.slides.length > 1) {
+          $("prevSlideBtn").onclick = () => {
+            state.slideIndex = (state.slideIndex - 1 + post.slides.length) % post.slides.length;
+            renderPostModal();
+          };
+          $("nextSlideBtn").onclick = () => {
+            state.slideIndex = (state.slideIndex + 1) % post.slides.length;
+            renderPostModal();
+          };
+        }
+
+        const thumbsRow = $("thumbsRow");
+        post.slides.forEach((slide, idx) => {
+          const img = document.createElement("img");
+          img.src = imgUrl(post, slide);
+          img.className = idx === state.slideIndex ? "active" : "";
+          img.onclick = () => {
+            state.slideIndex = idx;
+            renderPostModal();
+          };
+          thumbsRow.appendChild(img);
+        });
+
+        $("typeSegmented")
+          .querySelectorAll("button")
+          .forEach((btn) => {
+            btn.onclick = () => {
+              if (btn.disabled) return;
+              currentType = btn.dataset.type;
+              $("typeSegmented")
+                .querySelectorAll("button")
+                .forEach((b) => b.classList.toggle("active", b === btn));
+              $("captionField").style.display = currentType === "story" ? "none" : "";
+            };
+          });
+
+        $("captionInput").oninput = () => {
+          $("charCount").textContent = `${$("captionInput").value.length} / 2200`;
+        };
+
+        if (editingSchedule && $("deleteEditingScheduleBtn")) {
+          $("deleteEditingScheduleBtn").onclick = async () => {
+            await fetch(`/api/schedule/${editingSchedule.id}`, { method: "DELETE" });
+            state.editingScheduleId = null;
+            await loadPosts();
+            showToast("Agendamento excluído.");
+          };
+        }
+
+        $("openScheduleBtn").onclick = () => {
+          openScheduleModal(async (scheduledAt) => {
+            const url = editingSchedule ? `/api/schedule/${editingSchedule.id}` : "/api/schedule";
+            const method = editingSchedule ? "PUT" : "POST";
+            const res = await fetch(url, {
+              method,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                brandId: state.brandId,
+                postId: post.id,
+                type: currentType,
+                caption: $("captionInput").value,
+                slides: post.slides,
+                scheduledAt,
+              }),
+            });
+            if (res.ok) {
+              await loadPosts();
+              showToast(
+                editingSchedule
+                  ? `Agendamento atualizado para ${formatScheduleDate(scheduledAt)}!`
+                  : `Agendado para ${formatScheduleDate(scheduledAt)}!`,
+              );
+            }
+          }, editingSchedule?.scheduledAt || null);
+        };
+
+        $("saveMetaBtn").onclick = async () => {
+          if (editingSchedule) {
+            await fetch(`/api/schedule/${editingSchedule.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                brandId: state.brandId,
+                postId: post.id,
+                type: currentType,
+                caption: $("captionInput").value,
+                slides: post.slides,
+                scheduledAt: editingSchedule.scheduledAt,
+              }),
+            });
+          } else {
+            await fetch("/api/posts/meta", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                brandId: state.brandId,
+                postId: post.id,
+                caption: $("captionInput").value,
+                type: currentType,
+              }),
+            });
+          }
+          await loadPosts();
+          showToast(editingSchedule ? "Agendamento salvo!" : "Salvo!");
+        };
+
+        $("publishNowBtn").onclick = async () => {
+          if (!confirm(`Publicar "${post.title}" agora em ${handle}?`)) return;
+          $("publishNowBtn").disabled = true;
+          showToast("Publicando no Instagram...");
+          try {
+            const res = await fetch("/api/publish", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                brandId: state.brandId,
+                postId: post.id,
+                type: currentType,
+                caption: $("captionInput").value,
+                slides: post.slides,
+              }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || "Falha ao publicar");
+            showToast(
+              `Publicado! ${data.permalink ? `<a href="${data.permalink}" target="_blank">${data.permalink}</a>` : ""}`,
+            );
+            await loadPosts();
+          } catch (err) {
+            showToast("Erro: " + err.message);
+          } finally {
+            $("publishNowBtn").disabled = false;
+          }
+        };
+      }
+
+      function showToast(html) {
+        const t = $("publishToast");
+        t.innerHTML = html;
+        t.style.display = "block";
+      }
+
+      function renderSchedulesHtml() {
+        const pending = state.schedules.filter((s) => s.status === "pending");
+        if (pending.length === 0) return "";
+        return `<div class="field"><span class="field-label-row">Agendados (${pending.length})</span>${pending
+          .map(
+            (s) =>
+              `<div class="list-row"><span>${s.postId.split(":")[1] || s.postId} · <span class="mono">${s.scheduledAt.replace("T", " ")}</span></span><button class="btn btn-sm" onclick="cancelSchedule('${s.id}')">Cancelar</button></div>`,
+          )
+          .join("")}</div>`;
+      }
+
+      function renderHistoryHtml() {
+        if (state.history.length === 0) return "";
+        return `<div class="field"><span class="field-label-row">Publicados recentemente</span>${state.history
+          .slice(0, 5)
+          .map(
+            (h) =>
+              `<div class="list-row"><span>${h.postId.split(":")[1] || h.postId}</span>${h.permalink ? `<a href="${h.permalink}" target="_blank">Abrir ↗</a>` : `<span class="mono">${h.id}</span>`}</div>`,
+          )
+          .join("")}</div>`;
+      }
+
+      window.cancelSchedule = async (id) => {
+        await fetch(`/api/schedule/${id}`, { method: "DELETE" });
+        await loadPosts();
+      };
+
+      async function sendChat(e) {
+        e.preventDefault();
+        const text = $("chatInput").value.trim();
+        if (!text || state.isStreaming) return;
+        state.isStreaming = true;
+        $("sendBtn").disabled = true;
+        $("chatInput").value = "";
+        $("aiCanvas").classList.add("has-messages");
+
+        const msgs = $("messages");
+        const userEl = document.createElement("div");
+        userEl.className = "msg user";
+        userEl.textContent = text;
+        msgs.appendChild(userEl);
+
+        const botEl = document.createElement("div");
+        botEl.className = "msg assistant";
+        botEl.textContent = "Pensando...";
+        msgs.appendChild(botEl);
+        msgs.scrollTop = msgs.scrollHeight;
+
+        const prevSnapshot = new Map(state.posts.map((p) => [p.id, p.updatedAt]));
+        let readyPostId = null;
+        let accumulated = "";
+        const usedTools = [];
+        state.currentMessages.push({ role: "user", text });
+        try {
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              brandId: state.brandId,
+              message: text,
+              model: $("modelSelect").value || null,
+              thinking: $("thinkingSelect").value || null,
+            }),
+          });
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n\n");
+            buffer = lines.pop() || "";
+            for (const line of lines) {
+              if (!line.startsWith("data: ")) continue;
+              const event = JSON.parse(line.slice(6));
+              if (event.type === "token") {
+                accumulated += event.text;
+                botEl.textContent = accumulated;
+              } else if (event.type === "tool") {
+                usedTools.push(event.name);
+                const badge = document.createElement("span");
+                badge.className = "tool-pill";
+                badge.textContent = "⚡ " + event.name;
+                msgs.insertBefore(badge, botEl);
+              } else if (event.type === "post_ready" && event.postId) {
+                readyPostId = event.postId;
+              } else if (event.type === "error") {
+                accumulated = "Erro: " + event.message;
+                botEl.textContent = accumulated;
+              }
+              msgs.scrollTop = msgs.scrollHeight;
+            }
+          }
+          await loadPosts();
+          if (!readyPostId) {
+            const changed = state.posts.find(
+              (p) => !prevSnapshot.has(p.id) || p.updatedAt > prevSnapshot.get(p.id),
+            );
+            if (changed) readyPostId = changed.id;
+          }
+          state.currentMessages.push({
+            role: "assistant",
+            text: accumulated || botEl.textContent,
+            tools: usedTools,
+            postId: readyPostId || undefined,
+          });
+          await saveCurrentChat();
+          if (readyPostId) {
+            openPostModal(readyPostId);
+          }
+        } catch (err) {
+          const errText = "Erro: " + err.message;
+          botEl.textContent = errText;
+          state.currentMessages.push({ role: "assistant", text: errText, tools: usedTools });
+          await saveCurrentChat();
+        } finally {
+          state.isStreaming = false;
+          $("sendBtn").disabled = false;
+        }
+      }
+
+      $("chatForm").onsubmit = sendChat;
+      $("chatInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          $("chatForm").requestSubmit();
+        }
+      });
+
+      const scrollToGallery = () =>
+        $("gallerySection").scrollIntoView({ behavior: "smooth", block: "start" });
+      $("scrollGalleryBtn").onclick = scrollToGallery;
+      $("scrollCueBtn").onclick = scrollToGallery;
+      $("closePostModalBtn").onclick = () => {
+        state.editingScheduleId = null;
+        $("postModal").close();
+      };
+      $("postModal").addEventListener("close", () => {
+        state.editingScheduleId = null;
+      });
+      $("openChatsListBtn").onclick = async () => {
+        await loadChats();
+        renderChatsListModal();
+        $("chatsListModal").showModal();
+      };
+      $("closeChatsListBtn").onclick = () => $("chatsListModal").close();
+      $("openSchedulesListBtn").onclick = () => {
+        renderSchedulesListModal();
+        $("schedulesListModal").showModal();
+      };
+      $("closeSchedulesListBtn").onclick = () => $("schedulesListModal").close();
+      $("refreshPostsBtn").onclick = loadPosts;
+      $("resetChatBtn").onclick = async () => {
+        await fetch(`/api/chat/reset/${state.brandId}`, { method: "POST" });
+        state.currentChatId = null;
+        state.currentMessages = [];
+        $("messages").innerHTML = "";
+        $("aiCanvas").classList.remove("has-messages");
+      };
+
+      const R2_KEYS = [
+        "GEMINI_API_KEY",
+        "R2_CLOUDFLARE_ENDPOINT_DEFAULT",
+        "R2_CLOUDFLARE_PUBLIC_URL",
+        "R2_BUCKET",
+        "R2_CLOUDFLARE_ACCESS_KEY_ID",
+        "R2_CLOUDFLARE_SECRET_ACCESS_KEY",
+      ];
+
+      const settingsState = {
+        activeTab: "ranggo",
+        r2Values: {},
+        guideCache: {},
+        guideOpen: false,
+        isAnalyzing: false,
+      };
+
+      function escapeAttr(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      async function pickFolderInto(inputEl, btnEl) {
+        btnEl.disabled = true;
+        const prev = btnEl.textContent;
+        btnEl.textContent = "Abrindo...";
+        try {
+          const res = await fetch("/api/pick-folder", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ initialDir: inputEl.value.trim() || null }),
+          });
+          const data = await res.json();
+          if (res.ok && data.path) {
+            inputEl.value = data.path;
+          } else if (!res.ok) {
+            showGlobalToast(data.detail || "Não foi possível abrir o seletor.");
+          }
+        } finally {
+          btnEl.disabled = false;
+          btnEl.textContent = prev;
+        }
+      }
+
+      function renderSettingsTabs() {
+        const container = $("settingsTabs");
+        container.innerHTML = "";
+        const addBtn = document.createElement("button");
+        addBtn.type = "button";
+        addBtn.className = "seg-btn" + (settingsState.activeTab === "__new" ? " active" : "");
+        addBtn.textContent = "+";
+        addBtn.title = "Novo perfil";
+        addBtn.onclick = () => switchSettingsTab("__new");
+        container.appendChild(addBtn);
+
+        for (const b of state.brands) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "seg-btn" + (settingsState.activeTab === b.id ? " active" : "");
+          btn.textContent = b.name;
+          btn.onclick = () => switchSettingsTab(b.id);
+          container.appendChild(btn);
+        }
+
+        const r2Btn = document.createElement("button");
+        r2Btn.type = "button";
+        r2Btn.className = "seg-btn" + (settingsState.activeTab === "__r2" ? " active" : "");
+        r2Btn.textContent = "IA & R2";
+        r2Btn.onclick = () => switchSettingsTab("__r2");
+        container.appendChild(r2Btn);
+      }
+
+      async function switchSettingsTab(tabId) {
+        settingsState.activeTab = tabId;
+        settingsState.guideOpen = false;
+        renderSettingsTabs();
+        if (tabId !== "__new" && tabId !== "__r2" && settingsState.guideCache[tabId] === undefined) {
+          const res = await fetch(`/api/brands/${tabId}/guide`);
+          if (res.ok) {
+            const data = await res.json();
+            settingsState.guideCache[tabId] = data.content || "";
+          }
+        }
+        renderSettingsBody();
+      }
+
+      function renderSettingsBody() {
+        const body = $("settingsBody");
+        const tab = settingsState.activeTab;
+
+        if (tab === "__r2") {
+          $("settingsFootHint").textContent = "Salvo localmente em .env";
+          $("settingsSubmitBtn").textContent = "Salvar IA & R2";
+          body.innerHTML = `
+            <div class="settings-section">
+              <div class="settings-section-head">
+                <span class="settings-section-title">Chave da IA (Gemini)</span>
+                <span class="settings-section-desc">Necessária para o agente criar artes e executar ✨ Entender Design (aistudio.google.com/apikey).</span>
+              </div>
+              <div class="field">
+                <span class="field-label-row">GEMINI_API_KEY</span>
+                <input id="env_GEMINI_API_KEY" type="password" value="${escapeAttr(settingsState.r2Values.GEMINI_API_KEY)}" placeholder="AIza..." />
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-section-head">
+                <span class="settings-section-title">Endereço público temporário (R2)</span>
+                <span class="settings-section-desc">Usado só durante o envio para a Meta baixar a imagem (apagada logo depois).</span>
+              </div>
+              <div class="field">
+                <span class="field-label-row">Endpoint R2</span>
+                <input id="env_R2_CLOUDFLARE_ENDPOINT_DEFAULT" type="text" value="${escapeAttr(settingsState.r2Values.R2_CLOUDFLARE_ENDPOINT_DEFAULT)}" />
+              </div>
+              <div class="field">
+                <span class="field-label-row">URL Pública</span>
+                <input id="env_R2_CLOUDFLARE_PUBLIC_URL" type="text" value="${escapeAttr(settingsState.r2Values.R2_CLOUDFLARE_PUBLIC_URL)}" placeholder="https://pub-xxxx.r2.dev" />
+              </div>
+              <div class="field">
+                <span class="field-label-row">Nome do Bucket</span>
+                <input id="env_R2_BUCKET" type="text" value="${escapeAttr(settingsState.r2Values.R2_BUCKET)}" placeholder="social-studio-media" />
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-section-head">
+                <span class="settings-section-title">Chaves de acesso</span>
+                <span class="settings-section-desc">Chaves S3 do bucket no Cloudflare R2 (salvas apenas no .env local).</span>
+              </div>
+              <div class="field">
+                <span class="field-label-row">Access Key ID</span>
+                <input id="env_R2_CLOUDFLARE_ACCESS_KEY_ID" type="password" value="${escapeAttr(settingsState.r2Values.R2_CLOUDFLARE_ACCESS_KEY_ID)}" />
+              </div>
+              <div class="field">
+                <span class="field-label-row">Secret Access Key</span>
+                <input id="env_R2_CLOUDFLARE_SECRET_ACCESS_KEY" type="password" value="${escapeAttr(settingsState.r2Values.R2_CLOUDFLARE_SECRET_ACCESS_KEY)}" />
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        if (tab === "__new") {
+          $("settingsFootHint").textContent = "Depois de criar, clique em ✨ Entender Design";
+          $("settingsSubmitBtn").textContent = "Criar perfil";
+          body.innerHTML = `
+            <div class="settings-section">
+              <div class="settings-section-head">
+                <span class="settings-section-title">Novo perfil / projeto</span>
+                <span class="settings-section-desc">Cadastre qualquer projeto local e use a IA para mapear o design system e posts existentes.</span>
+              </div>
+              <div class="field">
+                <span class="field-label-row">Nome do perfil</span>
+                <input id="newBrandName" type="text" placeholder="Ex.: Meu App" required />
+              </div>
+              <div class="field">
+                <span class="field-label-row">Pasta do projeto local</span>
+                <div class="input-row">
+                  <input id="newBrandProjectPath" type="text" placeholder="Selecione a pasta do código..." />
+                  <button type="button" class="btn" id="pickNewProjectBtn">Procurar...</button>
+                </div>
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-section-head">
+                <span class="settings-section-title">Conta do Instagram (opcional)</span>
+                <span class="settings-section-desc">Você pode preencher agora ou depois.</span>
+              </div>
+              <div class="field">
+                <span class="field-label-row">Instagram Account ID</span>
+                <input id="newBrandAccountId" type="text" />
+              </div>
+              <div class="field">
+                <span class="field-label-row">Access Token</span>
+                <input id="newBrandAccessToken" type="password" />
+              </div>
+            </div>
+          `;
+          $("pickNewProjectBtn").onclick = () =>
+            pickFolderInto($("newBrandProjectPath"), $("pickNewProjectBtn"));
+          return;
+        }
+
+        const brand = state.brands.find((b) => b.id === tab);
+        if (!brand) return;
+        const guideText = settingsState.guideCache[brand.id] ?? "";
+        $("settingsFootHint").textContent = "Salvo localmente em brands.json";
+        $("settingsSubmitBtn").textContent = "Salvar alterações";
+
+        body.innerHTML = `
+          <div class="settings-section">
+            <div class="settings-section-head">
+              <span class="settings-section-title">Projeto local</span>
+              <span class="settings-section-desc">Pasta do código, assets e posts anteriores de ${escapeAttr(brand.name)}.</span>
+            </div>
+            <div class="field">
+              <span class="field-label-row">Nome do perfil</span>
+              <input id="brandNameInput" type="text" value="${escapeAttr(brand.name)}" required />
+            </div>
+            <div class="field">
+              <span class="field-label-row">Caminho da pasta do projeto</span>
+              <div class="input-row">
+                <input id="brandProjectPathInput" type="text" value="${escapeAttr(brand.projectPath)}" placeholder="Selecione a pasta do projeto..." />
+                <button type="button" class="btn" id="pickBrandProjectBtn">Procurar...</button>
+              </div>
+            </div>
+            <div class="field">
+              <span class="field-label-row">Pasta de posts já criados (opcional)</span>
+              <div class="input-row">
+                <input id="brandPostsDirInput" type="text" value="${escapeAttr(brand.postsDir)}" placeholder="Automático (${escapeAttr(brand.resolvedPostsDir)})" />
+                <button type="button" class="btn" id="pickBrandPostsBtn">Procurar...</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-head">
+              <div class="row" style="justify-content:space-between">
+                <span class="settings-section-title">Inteligência & Design System</span>
+                <span class="status-pill ${guideText.trim() ? "published" : ""}">${guideText.trim() ? "Guia pronto (.md)" : "Não analisado"}</span>
+              </div>
+              <span class="settings-section-desc">O agente lê CSS, fontes, logos e posts antigos do projeto para gerar o arquivo de regras visuais (${escapeAttr(brand.id)}.md).</span>
+            </div>
+            <div class="row">
+              <button type="button" class="btn btn-primary" id="analyzeDesignBtn" ${settingsState.isAnalyzing ? "disabled" : ""}>
+                ${settingsState.isAnalyzing ? "Analisando projeto..." : "✨ Entender Design"}
+              </button>
+              <button type="button" class="btn" id="toggleGuideBtn">
+                ${settingsState.guideOpen ? "Ocultar guia (.md)" : "Ver / Editar guia (.md)"}
+              </button>
+            </div>
+            <div id="analyzeLog" class="analyze-log"></div>
+            <div class="field" id="guideEditorWrap" style="${settingsState.guideOpen ? "" : "display:none"}">
+              <span class="field-label-row">
+                <span>Arquivo de regras (${escapeAttr(brand.id)}.md)</span>
+                <span class="mono">Editável</span>
+              </span>
+              <textarea id="brandGuideInput" class="guide-editor" rows="10" placeholder="Clique em ✨ Entender Design para gerar automaticamente...">${escapeAttr(guideText)}</textarea>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-head">
+              <span class="settings-section-title">Conta do Instagram</span>
+              <span class="settings-section-desc">Credenciais da Meta Graph API para publicar direto neste perfil.</span>
+            </div>
+            <div class="field">
+              <span class="field-label-row">Instagram Account ID</span>
+              <input id="brandAccountIdInput" type="text" value="${escapeAttr(brand.accountId)}" />
+            </div>
+            <div class="field">
+              <span class="field-label-row">Access Token</span>
+              <input id="brandAccessTokenInput" type="password" value="${escapeAttr(brand.accessToken)}" />
+            </div>
+          </div>
+
+          ${
+            state.brands.length > 1
+              ? `<div class="row" style="justify-content:flex-end">
+                  <button type="button" class="btn btn-sm btn-danger" id="deleteBrandBtn">Remover perfil ${escapeAttr(brand.name)}</button>
+                </div>`
+              : ""
+          }
+        `;
+
+        $("pickBrandProjectBtn").onclick = () =>
+          pickFolderInto($("brandProjectPathInput"), $("pickBrandProjectBtn"));
+        $("pickBrandPostsBtn").onclick = () =>
+          pickFolderInto($("brandPostsDirInput"), $("pickBrandPostsBtn"));
+
+        $("toggleGuideBtn").onclick = () => {
+          settingsState.guideOpen = !settingsState.guideOpen;
+          $("guideEditorWrap").style.display = settingsState.guideOpen ? "" : "none";
+          $("toggleGuideBtn").textContent = settingsState.guideOpen
+            ? "Ocultar guia (.md)"
+            : "Ver / Editar guia (.md)";
+        };
+
+        $("analyzeDesignBtn").onclick = async () => {
+          if (settingsState.isAnalyzing) return;
+          // Salva o caminho da pasta antes de analisar caso o usuário tenha acabado de alterar
+          await fetch(`/api/brands/${brand.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: $("brandNameInput").value,
+              projectPath: $("brandProjectPathInput").value,
+              postsDir: $("brandPostsDirInput").value,
+              accountId: $("brandAccountIdInput").value,
+              accessToken: $("brandAccessTokenInput").value,
+            }),
+          });
+
+          settingsState.isAnalyzing = true;
+          const btn = $("analyzeDesignBtn");
+          const log = $("analyzeLog");
+          btn.disabled = true;
+          btn.textContent = "Analisando projeto...";
+          log.classList.add("open");
+          log.textContent = "Inspecionando arquivos, tokens, fontes e posts existentes...\n";
+
+          try {
+            const res = await fetch(`/api/brands/${brand.id}/analyze-design`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                model: "neon",
+                thinking: "medium",
+              }),
+            });
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = "";
+            while (true) {
+              const { value, done } = await reader.read();
+              if (done) break;
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split("\n\n");
+              buffer = lines.pop() || "";
+              for (const line of lines) {
+                if (!line.startsWith("data: ")) continue;
+                const event = JSON.parse(line.slice(6));
+                if (event.type === "tool") {
+                  log.textContent += `⚡ ${event.name}\n`;
+                } else if (event.type === "token") {
+                  log.textContent += event.text;
+                } else if (event.type === "error") {
+                  log.textContent += `\nErro: ${event.message}\n`;
+                } else if (event.type === "done") {
+                  settingsState.guideCache[brand.id] = event.guide || "";
+                  if (event.postsDir && $("brandPostsDirInput")) {
+                    $("brandPostsDirInput").value = event.postsDir;
+                  }
+                  if ($("brandGuideInput")) {
+                    $("brandGuideInput").value = event.guide || "";
+                  }
+                  settingsState.guideOpen = true;
+                  showGlobalToast(`Design de ${brand.name} mapeado com sucesso!`);
+                }
+                log.scrollTop = log.scrollHeight;
+              }
+            }
+            await loadBrands();
+            renderSettingsTabs();
+            renderSettingsBody();
+          } catch (err) {
+            log.textContent += `\nErro: ${err.message}\n`;
+          } finally {
+            settingsState.isAnalyzing = false;
+            if ($("analyzeDesignBtn")) {
+              $("analyzeDesignBtn").disabled = false;
+              $("analyzeDesignBtn").textContent = "✨ Entender Design";
+            }
+          }
+        };
+
+        if ($("deleteBrandBtn")) {
+          $("deleteBrandBtn").onclick = async () => {
+            if (!confirm(`Remover o perfil "${brand.name}" do Social Studio? (Os arquivos do projeto não são apagados.)`)) {
+              return;
+            }
+            const res = await fetch(`/api/brands/${brand.id}`, { method: "DELETE" });
+            if (res.ok) {
+              delete settingsState.guideCache[brand.id];
+              await loadBrands();
+              settingsState.activeTab = state.brands[0]?.id || "__new";
+              renderSettingsTabs();
+              renderSettingsBody();
+              showGlobalToast(`Perfil ${brand.name} removido.`);
+            }
+          };
+        }
+      }
+
+      $("openSettingsBtn").onclick = async () => {
+        const res = await fetch("/api/settings");
+        const data = await res.json();
+        settingsState.r2Values = data.values || {};
+        settingsState.guideCache = {};
+        await switchSettingsTab(state.brandId);
+        $("settingsModal").showModal();
+      };
+      $("closeSettingsBtn").onclick = () => $("settingsModal").close();
+      $("settingsForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const tab = settingsState.activeTab;
+        if (tab === "__r2") {
+          const values = {};
+          for (const key of R2_KEYS) {
+            const input = $("env_" + key);
+            if (input) values[key] = input.value;
+          }
+          await fetch("/api/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ values }),
+          });
+          $("settingsModal").close();
+          showGlobalToast("Configurações do R2 salvas!");
+          return;
+        }
+        if (tab === "__new") {
+          const name = $("newBrandName").value.trim();
+          if (!name) return;
+          const res = await fetch("/api/brands", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name,
+              projectPath: $("newBrandProjectPath").value,
+              accountId: $("newBrandAccountId").value,
+              accessToken: $("newBrandAccessToken").value,
+            }),
+          });
+          if (res.ok) {
+            const created = await res.json();
+            state.brandId = created.id;
+            await loadBrands();
+            await switchSettingsTab(created.id);
+            showGlobalToast(`Perfil "${created.name}" criado! Agora clique em ✨ Entender Design.`);
+          }
+          return;
+        }
+        const payload = {
+          name: $("brandNameInput").value,
+          projectPath: $("brandProjectPathInput").value,
+          postsDir: $("brandPostsDirInput").value,
+          accountId: $("brandAccountIdInput").value,
+          accessToken: $("brandAccessTokenInput").value,
+        };
+        if (settingsState.guideOpen && $("brandGuideInput")) {
+          payload.guide = $("brandGuideInput").value;
+          settingsState.guideCache[tab] = payload.guide;
+        }
+        await fetch(`/api/brands/${tab}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        $("settingsModal").close();
+        await loadBrands();
+        showGlobalToast("Alterações salvas!");
+      };
+
+      loadBrands();
+    </script>
+  </body>
+</html>

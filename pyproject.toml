@@ -1,0 +1,24 @@
+[project]
+name = "social-studio"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "Ranggo", email = "ranggosuporte@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "boto3>=1.44.11",
+    "fastapi>=0.165.0",
+    "google-antigravity>=0.1.24",
+    "httpx>=0.28.1",
+    "pillow>=13.0.0",
+    "python-dotenv>=1.2.4",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.scripts]
+social-studio = "social_studio:main"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"

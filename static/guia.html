@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Guia de Configuração · Social Studio</title>
+    <meta name="theme-color" content="#09090b" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #09090b;
+        --bg-elev: #111115;
+        --bg-card: #16161c;
+        --bg-hover: #1e1e26;
+        --border: rgba(255, 255, 255, 0.08);
+        --border-strong: rgba(255, 255, 255, 0.14);
+        --ink: #f4f4f6;
+        --ink-soft: #a1a1b0;
+        --ink-faint: #6c6c7c;
+        --primary: #ffffff;
+        --primary-ink: #09090b;
+        --radius-md: 14px;
+        --radius-lg: 20px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.6;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 22px;
+        background: rgba(9, 9, 11, 0.82);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--ink);
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .brand-row img {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+      }
+
+      .btn {
+        border: 1px solid var(--border);
+        background: var(--bg-elev);
+        color: var(--ink);
+        padding: 7px 13px;
+        border-radius: 9px;
+        font: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn:hover {
+        background: var(--bg-hover);
+        border-color: var(--border-strong);
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--primary-ink);
+        border-color: transparent;
+      }
+
+      .btn-primary:hover {
+        background: #e4e4e7;
+      }
+
+      main {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 40px 20px 80px;
+        display: grid;
+        gap: 24px;
+      }
+
+      .hero {
+        display: grid;
+        gap: 8px;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(24px, 3vw, 32px);
+        letter-spacing: -0.03em;
+      }
+
+      .hero p {
+        margin: 0;
+        color: var(--ink-soft);
+        font-size: 14.5px;
+      }
+
+      .ai-prompt-card {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-lg);
+        padding: 20px 22px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .ai-prompt-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .ai-prompt-head strong {
+        font-size: 15px;
+      }
+
+      .ai-prompt-head p {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: var(--ink-soft);
+      }
+
+      pre.prompt-box {
+        margin: 0;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        line-height: 1.6;
+        color: var(--ink-soft);
+        white-space: pre-wrap;
+        max-height: 220px;
+        overflow-y: auto;
+      }
+
+      .step-card {
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 22px 24px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .step-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .step-num {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: var(--primary);
+        color: var(--primary-ink);
+        font-weight: 700;
+        font-size: 13px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+      }
+
+      .step-head h2 {
+        margin: 0;
+        font-size: 16.5px;
+        letter-spacing: -0.01em;
+      }
+
+      .tag {
+        margin-left: auto;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        color: var(--ink-soft);
+      }
+
+      ol,
+      ul {
+        margin: 0;
+        padding-left: 20px;
+        display: grid;
+        gap: 8px;
+        color: var(--ink-soft);
+        font-size: 13.5px;
+      }
+
+      li strong {
+        color: var(--ink);
+      }
+
+      code {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 1px 6px;
+        border-radius: 6px;
+        color: var(--ink);
+      }
+
+      a.ext {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+
+      a.ext:hover {
+        text-decoration: underline;
+      }
+
+      .vars-grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .var-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 9px 12px;
+        border-radius: 10px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        font-size: 12.5px;
+        flex-wrap: wrap;
+      }
+
+      .var-row span {
+        color: var(--ink-soft);
+      }
+
+      .note {
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        font-size: 12.5px;
+        color: var(--ink-soft);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand-row" href="/">
+        <img src="/icon.svg" alt="Social Studio" />
+        <span>Social Studio · Guia</span>
+      </a>
+      <a class="btn" href="/">← Voltar ao estúdio</a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Como conseguir todas as variáveis</h1>
+        <p>
+          Passo a passo completo para configurar a IA, publicar direto no Instagram e conectar seus
+          projetos locais. Todas as credenciais ficam salvas apenas no seu computador.
+        </p>
+      </section>
+
+      <section class="ai-prompt-card">
+        <div class="ai-prompt-head">
+          <div>
+            <strong>Prefere que sua IA te guie passo a passo?</strong>
+            <p>
+              Copie o prompt abaixo e cole no ChatGPT, Claude, Gemini ou Antigravity para configurar
+              tudo em poucos minutos.
+            </p>
+          </div>
+          <button id="copyPromptBtn" class="btn btn-primary" type="button">
+            Copiar prompt para IA
+          </button>
+        </div>
+        <pre id="aiPromptText" class="prompt-box">Quero configurar o aplicativo local **Social Studio** (que cria e publica posts, carrosséis e stories no Instagram usando IA).
+
+Me guie passo a passo, uma etapa por vez, esperando eu confirmar antes de avançar, para conseguir e preencher todas estas credenciais na interface do app (botão ⚙):
+
+1. **Chave da IA (aba ⚙ → IA & R2):**
+   - `GEMINI_API_KEY`: como gerar gratuitamente no Google AI Studio (aistudio.google.com/apikey).
+
+2. **Ponte temporária de imagens — Cloudflare R2 (aba ⚙ → IA & R2):**
+   *(A Meta Graph API exige URL pública HTTPS para baixar as imagens antes de publicar; o Social Studio envia e apaga logo depois.)*
+   - `R2_CLOUDFLARE_ENDPOINT_DEFAULT` (ex.: `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`)
+   - `R2_CLOUDFLARE_PUBLIC_URL` (URL pública `r2.dev` ou domínio customizado do bucket)
+   - `R2_CLOUDFLARE_ACCESS_KEY_ID`
+   - `R2_CLOUDFLARE_SECRET_ACCESS_KEY`
+   - `R2_BUCKET` (nome do bucket criado no R2)
+
+3. **Conta do Instagram — Meta Graph API (aba ⚙ → Perfil do projeto):**
+   - Garantir que o Instagram é conta Profissional (Comercial ou Criador) vinculada a uma Página do Facebook.
+   - Criar um App no Meta for Developers (developers.facebook.com) e um Usuário do Sistema (System User) no Business Manager para gerar um **Access Token permanente** (que não expira) com as permissões `instagram_basic`, `instagram_content_publish`, `pages_show_list` e `pages_read_engagement`.
+   - Descobrir o `Instagram Account ID` correto chamando `GET https://graph.facebook.com/v22.0/me/accounts?fields=id,name,instagram_business_account{id,username}` com o token gerado.
+
+4. **Conectar o projeto local (aba ⚙ → +):**
+   - Criar um perfil com o nome do projeto, escolher a pasta local pelo botão `Procurar...` e clicar em `✨ Entender Design` para o agente ler cores, tipografia e posts antigos automaticamente.
+
+Comece me perguntando qual etapa eu já tenho pronta e vamos uma por uma!</pre>
+      </section>
+
+      <section class="step-card">
+        <div class="step-head">
+          <span class="step-num">1</span>
+          <h2>Chave da IA (Gemini)</h2>
+          <span class="tag">⚙ → IA & R2</span>
+        </div>
+        <ol>
+          <li>
+            Acesse
+            <a class="ext" href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer"
+              >aistudio.google.com/apikey</a
+            >
+            e faça login com sua conta Google.
+          </li>
+          <li>Clique em <strong>Create API key</strong> e copie a chave gerada (começa com <code>AIza...</code>).</li>
+          <li>No Social Studio, abra <strong>⚙ → IA & R2</strong>, cole em <code>GEMINI_API_KEY</code> e clique em <strong>Salvar</strong>.</li>
+        </ol>
+        <div class="vars-grid">
+          <div class="var-row">
+            <code>GEMINI_API_KEY</code>
+            <span>Usada pelo agente para criar artes, legendas e executar ✨ Entender Design</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="step-card">
+        <div class="step-head">
+          <span class="step-num">2</span>
+          <h2>Ponte Temporária de Imagem (Cloudflare R2)</h2>
+          <span class="tag">⚙ → IA & R2</span>
+        </div>
+        <div class="note">
+          <strong>Por que isso existe?</strong> A API oficial do Instagram não aceita upload direto
+          de arquivo local — ela exige uma URL pública HTTPS. O Social Studio sobe o JPEG por alguns
+          segundos no seu R2 (plano gratuito) e apaga automaticamente assim que o Instagram confirma.
+        </div>
+        <ol>
+          <li>
+            Acesse
+            <a class="ext" href="https://dash.cloudflare.com" target="_blank" rel="noreferrer"
+              >dash.cloudflare.com</a
+            >
+            → <strong>R2 Object Storage</strong> → clique em <strong>Create bucket</strong> (ex.: <code>social-studio-media</code>).
+          </li>
+          <li>
+            Dentro do bucket, abra <strong>Settings → Public Development URL</strong>, habilite o
+            acesso público e copie a URL <code>https://pub-xxxx.r2.dev</code>.
+          </li>
+          <li>
+            Na página principal do R2, clique em <strong>Manage R2 API Tokens → Create API token</strong>
+            com permissão <strong>Object Read & Write</strong> no seu bucket.
+          </li>
+          <li>Copie o <strong>Endpoint S3</strong>, o <strong>Access Key ID</strong> e o <strong>Secret Access Key</strong> para <strong>⚙ → IA & R2</strong>.</li>
+        </ol>
+        <div class="vars-grid">
+          <div class="var-row">
+            <code>R2_CLOUDFLARE_ENDPOINT_DEFAULT</code>
+            <span>Ex.: <code>https://&lt;ACCOUNT_ID&gt;.r2.cloudflarestorage.com</code></span>
+          </div>
+          <div class="var-row">
+            <code>R2_CLOUDFLARE_PUBLIC_URL</code>
+            <span>Ex.: <code>https://pub-xxxx.r2.dev</code></span>
+          </div>
+          <div class="var-row">
+            <code>R2_CLOUDFLARE_ACCESS_KEY_ID</code>
+            <span>Chave S3 do token R2</span>
+          </div>
+          <div class="var-row">
+            <code>R2_CLOUDFLARE_SECRET_ACCESS_KEY</code>
+            <span>Segredo S3 do token R2</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="step-card">
+        <div class="step-head">
+          <span class="step-num">3</span>
+          <h2>Conta do Instagram (Meta Graph API)</h2>
+          <span class="tag">⚙ → Aba do Perfil</span>
+        </div>
+        <ol>
+          <li>
+            No celular, confirme que sua conta do Instagram está como <strong>Profissional</strong>
+            (Comercial ou Criador) e <strong>vinculada a uma Página do Facebook</strong>.
+          </li>
+          <li>
+            Acesse
+            <a class="ext" href="https://developers.facebook.com" target="_blank" rel="noreferrer"
+              >developers.facebook.com</a
+            >
+            e crie um aplicativo do tipo <strong>Business</strong> vinculado ao seu Portfólio Empresarial.
+          </li>
+          <li>
+            No
+            <a class="ext" href="https://business.facebook.com/settings/system-users" target="_blank" rel="noreferrer"
+              >Business Manager → Usuários do Sistema</a
+            >, crie um usuário (ex.: <code>social-studio</code>), atribua a ele a <strong>Página do Facebook</strong>
+            e o <strong>App</strong> criado.
+          </li>
+          <li>
+            Clique em <strong>Gerar novo token</strong> com expiração <strong>Nunca</strong> marcando:
+            <code>instagram_basic</code>, <code>instagram_content_publish</code>,
+            <code>pages_show_list</code> e <code>pages_read_engagement</code>. Esse é o seu
+            <strong>Access Token</strong>.
+          </li>
+          <li>
+            Para pegar o <strong>Instagram Account ID</strong> exato, consulte sua Página usando o token no
+            <a class="ext" href="https://developers.facebook.com/tools/explorer/" target="_blank" rel="noreferrer"
+              >Graph API Explorer</a
+            >
+            com o endpoint:
+            <code>me/accounts?fields=id,name,instagram_business_account{id,username}</code>
+            — use o campo <code>instagram_business_account.id</code>.
+          </li>
+        </ol>
+        <div class="vars-grid">
+          <div class="var-row">
+            <code>Instagram Account ID</code>
+            <span>ID numérico retornado em <code>instagram_business_account.id</code></span>
+          </div>
+          <div class="var-row">
+            <code>Access Token</code>
+            <span>Token permanente do System User (começa com <code>EAA...</code>)</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="step-card">
+        <div class="step-head">
+          <span class="step-num">4</span>
+          <h2>Adicionar seu Projeto & Entender Design</h2>
+          <span class="tag">⚙ → +</span>
+        </div>
+        <ol>
+          <li>Abra <strong>⚙</strong> e clique na aba <strong>+</strong> (primeira aba à esquerda).</li>
+          <li>Dê um nome ao perfil, clique em <strong>Procurar...</strong> para escolher a pasta do seu código local e clique em <strong>Criar perfil</strong>.</li>
+          <li>Dentro do perfil recém-criado, clique em <strong>✨ Entender Design</strong>: o agente vai ler CSS, cores, fontes e posts antigos do projeto e gerar automaticamente o guia em Markdown.</li>
+        </ol>
+      </section>
+    </main>
+
+    <script>
+      const copyBtn = document.getElementById("copyPromptBtn");
+      const promptEl = document.getElementById("aiPromptText");
+      copyBtn.onclick = async () => {
+        await navigator.clipboard.writeText(promptEl.textContent);
+        const prev = copyBtn.textContent;
+        copyBtn.textContent = "✓ Prompt copiado!";
+        setTimeout(() => {
+          copyBtn.textContent = prev;
+        }, 2200);
+      };
+    </script>
+  </body>
+</html>
