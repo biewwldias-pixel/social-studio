@@ -47,6 +47,7 @@ ALLOWED_ENV_KEYS = (
     "R2_BUCKET",
 )
 from studio.chats import delete_chat, list_chats, upsert_chat
+from studio.quota import check_quota_status
 from studio.updater import apply_update, check_for_update
 from studio.publisher import (
     add_schedule,
@@ -119,7 +120,7 @@ class UpdateBrandRequest(BaseModel):
 
 
 class AnalyzeDesignRequest(BaseModel):
-    model: str | None = "gemini-4-neon"
+    model: str | None = None
     thinking: str | None = "medium"
 
 
@@ -556,6 +557,11 @@ async def api_pick_folder(body: PickFolderRequest) -> dict[str, str]:
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Não foi possível abrir o seletor de pastas: {exc}") from exc
     return {"path": selected}
+
+
+@app.get("/api/quota")
+async def api_quota() -> dict[str, Any]:
+    return await check_quota_status()
 
 
 @app.get("/api/update/check")

@@ -1484,11 +1484,10 @@
             <div class="row" style="gap: 6px">
               <select id="modelSelect" class="mini-select" title="Modelo">
                 <option value="">Padrão (Hydrogen)</option>
+                <option value="gemini-3-flash-preview">3 Flash</option>
+                <option value="gemini-3.1-flash-lite-preview">3.1 Flash-Lite</option>
                 <option value="gemini-4-neon">Gemini 4 Neon</option>
                 <option value="gemini-3.1-pro-preview">3.1 Pro</option>
-                <option value="gemini-3-flash-preview">3 Flash</option>
-                <option value="gemini-2.5-pro">2.5 Pro</option>
-                <option value="gemini-2.5-flash">2.5 Flash</option>
               </select>
               <select id="thinkingSelect" class="mini-select" title="Esforço">
                 <option value="">Esforço: Auto</option>
@@ -2718,6 +2717,7 @@
         guideOpen: false,
         isAnalyzing: false,
         updateInfo: null,
+        quotaInfo: null,
       };
 
       function escapeAttr(str) {
@@ -2809,6 +2809,33 @@
                 <span class="field-label-row">GEMINI_API_KEY</span>
                 <input id="env_GEMINI_API_KEY" type="password" value="${escapeAttr(settingsState.r2Values.GEMINI_API_KEY)}" placeholder="AIza..." />
               </div>
+              <div class="row" style="justify-content:space-between">
+                <button type="button" class="btn btn-sm" id="checkQuotaBtn">Verificar cota e modelos</button>
+                <a href="https://ai.dev/rate-limit" target="_blank" rel="noreferrer" class="btn btn-sm" style="text-decoration:none">Painel oficial (ai.dev) ↗</a>
+              </div>
+              <div id="quotaListWrap" style="display:grid;gap:6px">
+                ${
+                  settingsState.quotaInfo
+                    ? settingsState.quotaInfo.error
+                      ? `<span class="mono" style="color:#fca5a5">${escapeAttr(settingsState.quotaInfo.error)}</span>`
+                      : (settingsState.quotaInfo.models || [])
+                          .map((m) => {
+                            const pillClass =
+                              m.status === "ok" ? "published" : m.status === "no_tier" || m.status === "limited" || m.status === "error" ? "failed" : "";
+                            return `
+                              <div class="list-row">
+                                <div style="display:grid;gap:2px;min-width:0">
+                                  <strong style="font-size:12.5px">${escapeAttr(m.label)}</strong>
+                                  <span class="mono" style="white-space:normal">${escapeAttr(m.detail)}${m.usedToday ? ` · ${m.usedToday} req hoje` : ""}</span>
+                                </div>
+                                <span class="status-pill ${pillClass}" style="flex-shrink:0">${escapeAttr(m.statusLabel)}</span>
+                              </div>
+                            `;
+                          })
+                          .join("")
+                    : ""
+                }
+              </div>
             </div>
             <div class="settings-section">
               <div class="settings-section-head">
@@ -2866,6 +2893,23 @@
               </div>
             </div>
           `;
+          $("checkQuotaBtn").onclick = async () => {
+            const btn = $("checkQuotaBtn");
+            btn.disabled = true;
+            btn.textContent = "Testando modelos...";
+            try {
+              const res = await fetch("/api/quota");
+              settingsState.quotaInfo = await res.json();
+              renderSettingsBody();
+            } catch (err) {
+              showGlobalToast("Erro ao checar cota: " + err.message);
+            } finally {
+              if ($("checkQuotaBtn")) {
+                $("checkQuotaBtn").disabled = false;
+                $("checkQuotaBtn").textContent = "Verificar cota e modelos";
+              }
+            }
+          };
           $("checkUpdateBtn").onclick = async () => {
             const btn = $("checkUpdateBtn");
             btn.disabled = true;
@@ -3078,8 +3122,8 @@
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                model: "gemini-4-neon",
-                thinking: "medium",
+                model: $("modelSelect").value || null,
+                thinking: $("thinkingSelect").value || "medium",
               }),
             });
             const reader = res.body.getReader();

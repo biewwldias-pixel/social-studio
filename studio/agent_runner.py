@@ -23,6 +23,7 @@ from studio.brands import (
     read_brand_guide,
     update_brand,
 )
+from studio.quota import record_usage
 
 SESSIONS_DIR = STUDIO_DIR / ".agent-sessions"
 
@@ -141,6 +142,7 @@ class BrandAgentPool:
     ) -> AsyncIterator[dict[str, str]]:
         async with self._get_lock(brand_id):
             before_posts = {p["id"]: p["updatedAt"] for p in list_brand_posts(brand_id)}
+            record_usage((model or "").strip() or DEFAULT_MODEL)
             try:
                 agent = await self._ensure_agent(brand_id, model=model, thinking=thinking)
                 response = await agent.chat(message)
@@ -190,7 +192,7 @@ class BrandAgentPool:
     async def stream_analyze_design(
         self,
         brand_id: str,
-        model: str | None = "gemini-4-neon",
+        model: str | None = None,
         thinking: str | None = "medium",
     ) -> AsyncIterator[dict[str, Any]]:
         brand = get_brand(brand_id)
@@ -206,10 +208,11 @@ class BrandAgentPool:
         analyze_save_dir = SESSIONS_DIR / f"_analyze_{brand.id}"
         analyze_save_dir.mkdir(parents=True, exist_ok=True)
 
-        normalized_model = (model or "").strip() or "gemini-4-neon"
+        normalized_model = (model or "").strip() or DEFAULT_MODEL
         if normalized_model == "neon":
             normalized_model = "gemini-4-neon"
         normalized_thinking = (thinking or "").strip() or "medium"
+        record_usage(normalized_model)
         model_config: str | ModelTarget = ModelTarget(
             name=normalized_model,
             endpoint=GeminiAPIEndpoint(

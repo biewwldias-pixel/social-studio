@@ -11,7 +11,7 @@ import httpx
 
 from studio.brands import IS_FROZEN, STUDIO_DIR
 
-APP_VERSION = "1.0.2"
+APP_VERSION = "1.0.3"
 GITHUB_REPO = "biewwldias-pixel/social-studio"
 LATEST_RELEASE_API = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
 

@@ -7,6 +7,7 @@ drafts/
 .agent-sessions/
 schedules.json
 history.json
+usage.json
 studio.log
 __pycache__/
 *.pyc
